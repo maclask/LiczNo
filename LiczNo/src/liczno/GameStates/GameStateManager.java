@@ -5,7 +5,6 @@
  */
 package liczno.GameStates;
 
-import liczno.GameStates.GameState;
 import java.awt.Graphics;
 import java.util.Stack;
 
@@ -19,6 +18,7 @@ public class GameStateManager {
     
     public GameStateManager(){
         states = new Stack<>();
+        states.push(new MenuState(this));
     }
     
     public void tick(){

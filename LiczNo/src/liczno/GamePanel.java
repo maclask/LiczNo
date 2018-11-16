@@ -18,8 +18,8 @@ import java.awt.event.KeyListener;
  */
 public class GamePanel extends JPanel implements Runnable, KeyListener{
    
-    public static final int width = 800;
-    public static final int height = 600;
+    public static final int width = 1024;
+    public static final int height = 768;
    
     private GameStateManager gsm;
     
@@ -31,6 +31,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
             
     public GamePanel(){
         setPreferredSize(new Dimension(width, height));
+        
+        addKeyListener(this);
+        setFocusable(true);
+        
         start();
     }
     
