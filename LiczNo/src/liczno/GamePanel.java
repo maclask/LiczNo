@@ -18,10 +18,11 @@ import java.awt.event.KeyListener;
  */
 public class GamePanel extends JPanel implements Runnable, KeyListener{
    
-    public static final int width = 1024;
-    public static final int height = 768;
+    public static final int WIDTH = 1024;
+    public static final int HEIGHT = 768;
    
     private GameStateManager gsm;
+
     
     private Thread thread;
     private boolean isRunning = false;
@@ -30,11 +31,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
     private long targetTime = 1000 / FPS;
             
     public GamePanel(){
-        setPreferredSize(new Dimension(width, height));
+        setPreferredSize(new Dimension(WIDTH, HEIGHT));
         
         addKeyListener(this);
         setFocusable(true);
-        
+        Images images = new Images();
         start();
     }
     
@@ -48,6 +49,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
     public void run(){
         long start, elapsed, wait;
         gsm = new GameStateManager();
+        
         while(isRunning){
             start = System.nanoTime();
             
@@ -69,13 +71,14 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
     }
 
     public void tick(){
-        System.out.println("running");
+       gsm.tick();
     }
     
     @Override
     public void paintComponent(Graphics g){
-        super.paintComponent(g);
-        gsm.draw(g);
+       super.paintComponent(g);
+       g.clearRect(0,0,WIDTH,HEIGHT);
+       gsm.draw(g);
     }
 
 

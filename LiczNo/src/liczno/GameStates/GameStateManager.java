@@ -14,7 +14,7 @@ import java.util.Stack;
  */
 public class GameStateManager {
     
-    private Stack<GameState> states;
+    public Stack<GameState> states;
     
     public GameStateManager(){
         states = new Stack<>();

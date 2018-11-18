@@ -15,6 +15,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import liczno.GamePanel;
+import liczno.Images;
 
 /**
  *
@@ -25,12 +26,11 @@ public class MenuState extends GameState{
     private String[] options = {"ROZPOCZNIJ GRĘ", "POMOC", "WYJDŹ"};
     private int currentSel = 0;
    
-    private BufferedImage bg, logo;
-    private int bgWidth, bgHeight, logoWidth, logoHeight;
+    
     
     public MenuState(GameStateManager gsm){
         super(gsm);
-       loadImages();
+       init();
   
     }
     
@@ -53,22 +53,22 @@ public class MenuState extends GameState{
         Font f2 = liczno.Main.f.deriveFont(100F);
         g2d.setFont(f2);
         g2d.setColor(Color.BLACK);
-       g2d.drawImage(bg, 0, 0, bgWidth, bgHeight, null);
-       g2d.drawImage(logo, GamePanel.width / 2 - 400, 350, 300, 300, null);
-       g2d.drawString("MENU", GamePanel.width/2-140+5,200+5);
+       g2d.drawImage(Images.bg, 0, 0, Images.bgWidth, Images.bgHeight, null);
+       g2d.drawImage(Images.logo, GamePanel.WIDTH / 2 - 400, 350, 300, 300, null);
+       g2d.drawString("MENU", GamePanel.WIDTH/2-140+5,200+5);
        g2d.setColor(Color.WHITE);
-        g2d.drawString("MENU", GamePanel.width/2-140,200);
+        g2d.drawString("MENU", GamePanel.WIDTH/2-140,200);
        for(int i=0; i<options.length; i++){
           g2d.setFont(new Font(g2d.getFont().getFontName(), Font.PLAIN, 20)); 
            g2d.setColor(Color.BLACK);
-           g2d.drawString(options[i], GamePanel.width / 2 +3, 400 + i * 100 +3);
+           g2d.drawString(options[i], GamePanel.WIDTH / 2 +3, 400 + i * 100 +3);
            if(i==currentSel){
                g2d.setColor(new Color(255,213,109));
            }
            else{
                g2d.setColor(Color.WHITE);
            }
-           g2d.drawString(options[i], GamePanel.width / 2, 400 + i *100);
+           g2d.drawString(options[i], GamePanel.WIDTH / 2, 400 + i *100);
        }
     }
 
@@ -91,6 +91,7 @@ public class MenuState extends GameState{
            switch (currentSel) {
            //start
                case 0:
+                   gsm.states.push(new Level1State(gsm));
                    break;
            //help
                case 1:
@@ -110,14 +111,5 @@ public class MenuState extends GameState{
     public void keyReleased(int k) {
        
     }
-    private void loadImages(){
-        try{
-            bg = ImageIO.read(getClass().getResource("Images/bg.png"));
-            logo = ImageIO.read(getClass().getResource("Images/logo.png"));
-        }catch(IOException ioe){System.out.println("Unable to open file");}
-        bgWidth = bg.getWidth();
-       bgHeight = bg.getHeight();  
-       logoWidth = logo.getWidth();
-       logoHeight = logo.getHeight(); 
-    }
+   
 }
