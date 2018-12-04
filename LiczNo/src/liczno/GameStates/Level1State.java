@@ -30,10 +30,10 @@ public class Level1State extends GameState{
        player = new Player(200, 250, 170, 170);
        b = new Block[5];
        b[0] = new Block(0, 618);
-       b[1] = new Block(270, 618);
+       b[1] = new Block(275, 618);
        b[2] = new Block(540, 618);
        b[3] = new Block(810, 618);
-       b[4] = new Block(500, 558);
+       b[4] = new Block(500, 238);
     }
 
     @Override

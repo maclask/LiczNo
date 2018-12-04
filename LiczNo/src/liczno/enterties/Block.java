@@ -16,7 +16,7 @@ import liczno.Images;
  */
 public class Block extends Rectangle{
     
-    public static final int blockWidth=297;
+    public static final int blockWidth=279;
     public static final int blockHeight=150;
 
 
