@@ -24,6 +24,7 @@
 package liczno.enterties;
 
 import java.awt.Graphics;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
 import liczno.Images;
@@ -39,34 +40,42 @@ public class Bombs {
     private ArrayList<Block> blocksList;
     private ArrayList<Bombs> bombsList;
     Random generator;
-    private int[] selectedBlock, selectedX;
+    private List<Integer> selectedBlock;
+    private List<Integer> selectedX;
+    private int newValue;
     
     public Bombs(int amount, ArrayList<Block> blocksList){
         
         this.amount = amount;
         this.blocksList = blocksList;
         bombsList = new ArrayList<>();
-        
-        selectedBlock = new int[amount];
-        selectedX = new int[amount];
+        selectedBlock = new ArrayList<>();
+        selectedX = new ArrayList<>();
         init();
         
     }
     
     private void init(){
+        generator = new Random();
            for(int i=0; i<amount; i++){
-               generator = new Random();
-            selectedBlock[i] = generator.nextInt(blocksList.size());
-            selectedX[i] = generator.nextInt((int)blocksList.get(selectedBlock[i]).getWidth());
-            System.out.println(selectedBlock[i]);
-            System.out.println(selectedX[i]);
+            
+            newValue = generator.nextInt(blocksList.size());
+            if(selectedBlock.contains(newValue))i-- ;
+            else {
+                selectedBlock.add(newValue);
+                selectedX.add(generator.nextInt((int)blocksList.get(newValue).getWidth()));
+            }
+            
+            
                        
         }
+           for(int e:selectedBlock) System.out.println(e);
     }
     
     public void draw(Graphics g){
-        for(int i=0; i<amount; i++){
-            g.drawImage(Images.bomb, (int)blocksList.get(selectedBlock[i]).getX()+selectedX[i], (int)blocksList.get(selectedBlock[i]).getY()-Images.bomb.getHeight(), null);
+        for(int i=0; i<selectedBlock.size(); i++){
+            g.drawImage(Images.bomb, (int)blocksList.get(selectedBlock.get(i)).getX()+selectedX.get(i), 
+                    (int)blocksList.get(selectedBlock.get(i)).getY()-Images.bomb.getHeight(), null);
         }
     }
 }

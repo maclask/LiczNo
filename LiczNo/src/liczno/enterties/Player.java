@@ -29,10 +29,10 @@ public class Player{
     private double x,y;
     
 
-    private double jumpSpeed=7.5;
+    private double jumpSpeed=10;
     private double currentJumpSpeed = jumpSpeed;
     
-    private double maxFallSpeed = 5;
+    private double maxFallSpeed = 10;
     private double currentFallSpeed = .1;
     
     private int width, height;
@@ -55,15 +55,15 @@ public class Player{
        
        //if(!bottomCollision)isFalling=true;
         //movement
-        if(left) x--;
-        if(right) x++;
+        if(left) x-=1.5;
+        if(right) x+=1.5;
         
-        if(isJumping){
+        if(isJumping && !isFalling){
             y -= currentJumpSpeed;
-            currentJumpSpeed -= .1;
+            currentJumpSpeed -= .2;
             if(currentJumpSpeed<=0){
                 currentJumpSpeed=jumpSpeed;
-                isJumping=false;
+               // isJumping=false;
                 isFalling=true;
             }                     
         }
@@ -72,18 +72,19 @@ public class Player{
             y += currentFallSpeed;
             
             if(currentFallSpeed<maxFallSpeed){
-                currentFallSpeed += .1;
+                currentFallSpeed += .2;
+                
             }
             
         }
-        else currentFallSpeed=.1;
+        else{ currentFallSpeed=.1;}
         //then = new Point((int)x,(int)y);
         for(int i=0; i<b.size(); i++){
                    
         //block = new Rectangle((int)b.get(i).x,(int)b.get(i).y,b.get(i).width,b.get(i).height);
         //collisions
         if(getBounds().intersects(b.get(i).getBounds())){
-            y=(int)b.get(i).getY()-(int)height;
+            y=(int)b.get(i).getY()-(int)height+1;
             isFalling=false;
             bottomCollision = true;
            // System.out.println(i);

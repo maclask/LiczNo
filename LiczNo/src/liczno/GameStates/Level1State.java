@@ -20,7 +20,7 @@ public class Level1State extends GameState{
     
     public Level1State(GameStateManager gsm){
         super(gsm);
-        init(); 
+        //init(); 
 
     }
 
@@ -32,7 +32,7 @@ public class Level1State extends GameState{
     public void init() {
        player = new Player(10, 10, 170, 170);
        map = new Map("map1");
-       bombs = new Bombs(10,map.getBlocks());
+       bombs = new Bombs(4,map.getBlocks());
     }
 
     @Override

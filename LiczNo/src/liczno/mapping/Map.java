@@ -44,8 +44,7 @@ public class Map {
         } catch (IOException ex) {
             Logger.getLogger(Map.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.out.println(width);
-        System.out.println(height);
+
 
         
         blocks = new Block[height][width];
