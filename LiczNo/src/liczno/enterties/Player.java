@@ -13,6 +13,7 @@ import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import liczno.GamePanel;
 import liczno.Images;
@@ -28,14 +29,14 @@ public class Player{
     private double x,y;
     
 
-    private double jumpSpeed=5;
+    private double jumpSpeed=7.5;
     private double currentJumpSpeed = jumpSpeed;
     
     private double maxFallSpeed = 5;
     private double currentFallSpeed = .1;
     
     private int width, height;
-    private int o=0;
+
        
    
     public Player(int x, int y, int width, int height){
@@ -45,9 +46,9 @@ public class Player{
         this.height = height;
 
     }
-    private Rectangle player, block;
+
     //private Point now, then;
-    public void tick(Block[] b){
+    public void tick(ArrayList<Block> b){
  
         //now = new Point((int)x,(int)y);
        //player = new Rectangle((int)x,(int)y,width,height);              
@@ -77,31 +78,32 @@ public class Player{
         }
         else currentFallSpeed=.1;
         //then = new Point((int)x,(int)y);
-        for(int i=0; i<b.length; i++){
-           
-        //block = new Rectangle((int)b[i].x,(int)b[i].y,b[i].width,b[i].height);
+        for(int i=0; i<b.size(); i++){
+                   
+        //block = new Rectangle((int)b.get(i).x,(int)b.get(i).y,b.get(i).width,b.get(i).height);
         //collisions
-        if(getBounds().intersects(b[i].getBounds())){
-            y=(int)b[i].getY()-(int)height;
+        if(getBounds().intersects(b.get(i).getBounds())){
+            y=(int)b.get(i).getY()-(int)height;
             isFalling=false;
             bottomCollision = true;
            // System.out.println(i);
         }
         else {if(!isJumping) isFalling=true;bottomCollision = false;}
        
-        if(getBoundsLeft().intersects(b[i].getBounds())){
-            x=(int)b[i].getX()+(int)b[i].getWidth()-30;
+        if(getBoundsLeft().intersects(b.get(i).getBounds())){
+            x=(int)b.get(i).getX()+(int)b.get(i).getWidth()-30;
             left=false;
         }
         
-        if(getBoundsRight().intersects(b[i].getBounds())){
-            x=(int)b[i].getX()-(int)width+25;
+        if(getBoundsRight().intersects(b.get(i).getBounds())){
+            x=(int)b.get(i).getX()-(int)width+25;
             right=false;
         }
-        if(getBoundsTop().intersects(b[i].getBounds())){
+        if(getBoundsTop().intersects(b.get(i).getBounds())){
             isJumping=false;
             isFalling=true;
         }
+        
         }
     }
     
@@ -111,8 +113,8 @@ public class Player{
        // else 
       // if(bottomCollision)g.drawRect(3, 3, 100, 100);
         g.drawImage(Images.player, (int)x, (int)y, width, height, null);
-//        Graphics2D g2d = (Graphics2D) g;
-//        g2d.draw(getBounds());
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.draw(getBounds());
 //        g2d.draw(getBoundsRight());
 //        g2d.draw(getBoundsLeft());
 //        g2d.draw(getBoundsTop());
@@ -124,10 +126,8 @@ public class Player{
         if((k == KeyEvent.VK_W || k == KeyEvent.VK_UP ) && !isJumping) 
         {isJumping = true;
         isFalling=false;
-        System.out.println(o);
-        o++;
         }
-       
+    //   if(k == KeyEvent.VK_R) x=0;y=0;
 
     }
     

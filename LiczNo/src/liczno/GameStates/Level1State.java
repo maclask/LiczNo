@@ -7,7 +7,9 @@ package liczno.GameStates;
 
 import java.awt.Graphics;
 import liczno.enterties.Block;
+import liczno.enterties.Bombs;
 import liczno.enterties.Player;
+import liczno.mapping.Map;
 
 
 /**
@@ -22,35 +24,28 @@ public class Level1State extends GameState{
 
     }
 
-    Player player;
-    Block[] b;
+    private Player player;
+    private Map map;
+    private Bombs bombs;
     
     @Override
     public void init() {
-       player = new Player(200, 250, 170, 170);
-       b = new Block[5];
-       b[0] = new Block(0, 618);
-       b[1] = new Block(275, 618);
-       b[2] = new Block(540, 618);
-       b[3] = new Block(810, 618);
-       b[4] = new Block(500, 238);
+       player = new Player(10, 10, 170, 170);
+       map = new Map("map1");
+       bombs = new Bombs(10,map.getBlocks());
     }
 
     @Override
     public void tick() {
-        for(int i=0;i<b.length;i++){
-            //b[i].draw();
-        }
-        player.tick(b);
+        player.tick(map.getBlocks());
     }
 
     @Override
     public void draw(Graphics g) {
-        player.draw(g);
-        for(int i=0;i<b.length;i++){
-            b[i].draw(g);
-        }
-        //b.draw(g);
+       player.draw(g);
+       map.draw(g);
+       bombs.draw(g);
+        
     }
 
     @Override

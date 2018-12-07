@@ -16,19 +16,20 @@ import javax.imageio.ImageIO;
  * @author Maciek
  */
 public class Images {
-    public static BufferedImage [] blocks;
-    
-    public static BufferedImage bg, logo, player;
+      
+    public static BufferedImage bg, logo, player, block, icon, bomb;
     public static int bgWidth, bgHeight, logoWidth, logoHeight;
     
     public Images(){
-        blocks = new BufferedImage[1];
+       //blocks = new BufferedImage[1];
         
         try {
-            blocks[0] = ImageIO.read(getClass().getResourceAsStream("images/block2.png"));
+            block= ImageIO.read(getClass().getResourceAsStream("images/block2.png"));
             bg = ImageIO.read(getClass().getResource("images/bg.png"));
             logo = ImageIO.read(getClass().getResource("images/logo.png"));
             player = ImageIO.read(getClass().getResource("images/player.png"));
+            icon = ImageIO.read(getClass().getResource("images/logo.small.png"));
+            bomb = ImageIO.read(getClass().getResource("images/bomb.png"));
         } 
         catch (IOException e) {
             Logger.getLogger(Images.class.getName()).log(Level.SEVERE, null, e);

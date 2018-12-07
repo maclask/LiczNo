@@ -37,8 +37,7 @@ public class Main {
             frame.setLocationRelativeTo(null);
             frame.setPreferredSize(new Dimension(600,600));
             frame.setVisible(true);
-            Main a = new Main();
-            //frame.setIconImage(ImageIO.read(new File("src\\liczno\\GameStates\\Images/logo.small.png")));
+            frame.setIconImage(Images.logo);
             
                try
         {

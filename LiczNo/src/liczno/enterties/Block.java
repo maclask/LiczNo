@@ -16,21 +16,15 @@ import liczno.Images;
  */
 public class Block extends Rectangle{
     
-    public static final int blockWidth=279;
-    public static final int blockHeight=150;
-
+    public static final int blockWidth=274;
+    public static final int blockHeight=145;
 
     public Block(int x, int y){
         setBounds(x,y,blockWidth,blockHeight);
+    
     }
     
     public void draw(Graphics g){
-        g.drawImage(Images.blocks[0], x, y, null);
-//        g.drawImage(Images.blocks[0], 0, 618, null);
-//        g.drawImage(Images.blocks[0], 270, 618, null);
-//        g.drawImage(Images.blocks[0], 540, 618, null);
-//        g.drawImage(Images.blocks[0], 810, 618, null);
-//         g.drawImage(Images.blocks[0], 500, 518, null);
-        
+        g.drawImage(Images.block, x, y, null);
     }
 }
