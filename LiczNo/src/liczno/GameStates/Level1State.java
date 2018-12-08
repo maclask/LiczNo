@@ -6,6 +6,8 @@
 package liczno.GameStates;
 
 import java.awt.Graphics;
+import liczno.GamePanel;
+import liczno.Images;
 import liczno.enterties.Block;
 import liczno.enterties.Bombs;
 import liczno.enterties.Player;
@@ -37,15 +39,17 @@ public class Level1State extends GameState{
 
     @Override
     public void tick() {
-        player.tick(map.getBlocks());
+        player.tick(map.getBlocks(), bombs.getBombs());
     }
 
     @Override
     public void draw(Graphics g) {
-       player.draw(g);
+      
+        g.drawImage(Images.bg, 0, 0, GamePanel.WIDTH, GamePanel.HEIGHT, null);
+
        map.draw(g);
        bombs.draw(g);
-        
+       player.draw(g);
     }
 
     @Override

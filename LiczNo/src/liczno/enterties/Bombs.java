@@ -38,7 +38,8 @@ public class Bombs {
     
     private int amount;
     private ArrayList<Block> blocksList;
-    private ArrayList<Bombs> bombsList;
+    private ArrayList<Bomb> bombsList;
+    Bomb bomb;
     Random generator;
     private List<Integer> selectedBlock;
     private List<Integer> selectedX;
@@ -64,6 +65,8 @@ public class Bombs {
             else {
                 selectedBlock.add(newValue);
                 selectedX.add(generator.nextInt((int)blocksList.get(newValue).getWidth()));
+                bomb = new Bomb((int)blocksList.get(selectedBlock.get(i)).getX()+selectedX.get(i),(int)blocksList.get(selectedBlock.get(i)).getY()-Images.bomb.getHeight());
+                bombsList.add(bomb);
             }
             
             
@@ -73,9 +76,12 @@ public class Bombs {
     }
     
     public void draw(Graphics g){
-        for(int i=0; i<selectedBlock.size(); i++){
-            g.drawImage(Images.bomb, (int)blocksList.get(selectedBlock.get(i)).getX()+selectedX.get(i), 
-                    (int)blocksList.get(selectedBlock.get(i)).getY()-Images.bomb.getHeight(), null);
+        for(int i=0; i<bombsList.size(); i++){
+            bombsList.get(i).draw(g);
         }
+    }
+    
+     public ArrayList<Bomb> getBombs(){
+        return bombsList;
     }
 }
