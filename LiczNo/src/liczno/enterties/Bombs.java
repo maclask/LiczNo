@@ -65,14 +65,11 @@ public class Bombs {
             else {
                 selectedBlock.add(newValue);
                 selectedX.add(generator.nextInt((int)blocksList.get(newValue).getWidth()));
-                bomb = new Bomb((int)blocksList.get(selectedBlock.get(i)).getX()+selectedX.get(i),(int)blocksList.get(selectedBlock.get(i)).getY()-Images.bomb.getHeight());
+                bomb = new Bomb((int)blocksList.get(selectedBlock.get(i)).getX()+selectedX.get(i),
+                        (int)blocksList.get(selectedBlock.get(i)).getY()-Images.bomb.getHeight());
                 bombsList.add(bomb);
-            }
-            
-            
-                       
+            }                      
         }
-           for(int e:selectedBlock) System.out.println(e);
     }
     
     public void draw(Graphics g){

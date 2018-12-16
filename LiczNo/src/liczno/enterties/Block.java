@@ -16,8 +16,8 @@ import liczno.Images;
  */
 public class Block extends Rectangle{
     
-    public static final int blockWidth=274;
-    public static final int blockHeight=145;
+    public static final int blockWidth=205;
+    public static final int blockHeight=85;
 
     public Block(int x, int y){
         setBounds(x,y,blockWidth,blockHeight);

@@ -5,17 +5,15 @@
  */
 package liczno.enterties;
 
-import java.awt.Color;
+import liczno.GameStates.MathTaskState;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
-import javax.imageio.ImageIO;
 import liczno.GamePanel;
+import liczno.GameStates.GameStateManager;
+import liczno.GameStates.Level1State;
 import liczno.Images;
 
 /**
@@ -24,11 +22,11 @@ import liczno.Images;
  */
 public class Player{
 
-    private boolean left = false, right = false, isJumping=false, isFalling=false, topCollision = false, bombTouched = false, solved = false;
-    
+    private boolean left = false, right = false, isJumping=false, isFalling=false, topCollision = false;
+    public static boolean bombTouched = false;
+    public static boolean solved = false;
     private double x,y;
     
-
     private double jumpSpeed=10;
     private double currentJumpSpeed = jumpSpeed;
     
@@ -37,8 +35,7 @@ public class Player{
     
     private int width, height;
 
-    private MathTask task;
-   
+
     public Player(int x, int y, int width, int height){
         this.x = x;
         this.y =y;
@@ -47,13 +44,7 @@ public class Player{
 
     }
 
-    //private Point now, then;
     public void tick(ArrayList<Block> b, ArrayList<Bomb> bombs){
- 
-        //now = new Point((int)x,(int)y);
-       //player = new Rectangle((int)x,(int)y,width,height);              
-       
-       //if(!bottomCollision)isFalling=true;
         //movement
         if(left) x-=1.5;
         if(right) x+=1.5;
@@ -78,31 +69,28 @@ public class Player{
             
         }
         else{ currentFallSpeed=.1;}
-        //then = new Point((int)x,(int)y);
         
-        
+        //bombs collisions
         for(int i=0; i<bombs.size(); i++){
         if(getBounds().intersects(bombs.get(i).getBounds())){
             bombTouched = true;
-
-            if(task == null)task = new MathTask();
+            left=false;
+            right=false;
             if(solved) {
                 bombs.remove(i);
                 bombTouched = false;
-                task=null;
+                solved=false;
             }
         }
         }
         
+        //blocks collisions
         for(int i=0; i<b.size(); i++){
-                   
-        //block = new Rectangle((int)b.get(i).x,(int)b.get(i).y,b.get(i).width,b.get(i).height);
-        //collisions
+            
         if(getBounds().intersects(b.get(i).getBounds())){
-            y=(int)b.get(i).getY()-(int)height+1;
+            y=(int)b.get(i).getY()-(int)height;
             isFalling=false;
-            //bottomCollision = true;
-           // System.out.println(i);
+            isJumping=false;
         }
         else {if(!isJumping) isFalling=true;}
        
@@ -118,23 +106,29 @@ public class Player{
         if(getBoundsTop().intersects(b.get(i).getBounds())){
             isJumping=false;
             isFalling=true;
+           // y=(int)b.get(i).getY()+(int)b.get(i).getHeight();
         }
         
         }
+        
+        if(x+width>GamePanel.WIDTH){
+            x=GamePanel.WIDTH-width;
+            right=false;
+        }
+        if(x<0){
+            x=0;
+            left=false;
+        }
     }
     
-    public void draw(Graphics g){        //if(left) g.drawImage(Images.player, (int)x + width, (int)y, - width, height, null);
-       // else 
-      // if(bottomCollision)g.drawRect(3, 3, 100, 100);
+    public void draw(Graphics g){        
         g.drawImage(Images.player, (int)x, (int)y, width, height, null);
         Graphics2D g2d = (Graphics2D) g;
         g2d.draw(getBounds());
-//        g2d.draw(getBoundsRight());
-//        g2d.draw(getBoundsLeft());
-//        g2d.draw(getBoundsTop());
-        if(bombTouched){
-            task.draw(g);
-        }
+        g2d.draw(getBoundsRight());
+        g2d.draw(getBoundsLeft());
+        g2d.draw(getBoundsTop());
+
     }
     
     public void keyPressed(int k){
@@ -145,22 +139,7 @@ public class Player{
         isFalling=false;
         }
         
-        if(bombTouched && (
-                k == KeyEvent.VK_0 || 
-                k == KeyEvent.VK_1 || 
-                k == KeyEvent.VK_2 || 
-                k == KeyEvent.VK_3 || 
-                k == KeyEvent.VK_4 || 
-                k == KeyEvent.VK_5 || 
-                k == KeyEvent.VK_6 || 
-                k == KeyEvent.VK_7 || 
-                k == KeyEvent.VK_8 || 
-                k == KeyEvent.VK_9)) {
-            task.input(k);
-            
-        }
-        if(bombTouched &&  k == KeyEvent.VK_BACK_SPACE) task.deleteLastOne();
-        if(bombTouched &&  k == KeyEvent.VK_ENTER) solved = task.enter();
+        
           //if(k == KeyEvent.VK_R) x=0;y=0;
 
     }

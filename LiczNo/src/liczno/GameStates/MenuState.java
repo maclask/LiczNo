@@ -25,7 +25,7 @@ public class MenuState extends GameState{
 
     private String[] options = {"ROZPOCZNIJ GRĘ", "POMOC", "WYJDŹ"};
     private int currentSel = 0;
-   
+    private Font f2;
     
     
     public MenuState(GameStateManager gsm){
@@ -50,8 +50,8 @@ public class MenuState extends GameState{
         g2d.setRenderingHint(
         RenderingHints.KEY_TEXT_ANTIALIASING,
         RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-//        Font f2 = liczno.Main.f.deriveFont(100F);
-//        g2d.setFont(f2);
+        f2 = liczno.Main.f.deriveFont(100F);
+        g2d.setFont(f2);
         g2d.setColor(Color.BLACK);
        g2d.drawImage(Images.bg, 0, 0, Images.bgWidth, Images.bgHeight, null);
        g2d.drawImage(Images.logo, GamePanel.WIDTH / 2 - 400, 350, 300, 300, null);

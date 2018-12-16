@@ -7,6 +7,7 @@ package liczno.GameStates;
 
 import java.awt.Graphics;
 import java.util.Stack;
+import liczno.enterties.Player;
 
 /**
  *
@@ -26,7 +27,14 @@ public class GameStateManager {
     }
     
     public void draw(Graphics g){
+        //to draw level and math task simultaneously
+        if(Player.bombTouched){
+            GameState top = states.empty() ? null : states.pop();
+            states.peek().draw(g);
+            states.push(top);
+        }
         states.peek().draw(g);
+        
     }
     
     public void keyPressed(int e){
@@ -36,4 +44,6 @@ public class GameStateManager {
     public void keyReleased(int e){
         states.peek().keyReleased(e);
     }
+    
+    
 }

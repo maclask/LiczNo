@@ -21,13 +21,9 @@ import javax.swing.JFrame;
 public class Main {
 
     public static Font f;
-    
-    /**
-     * @param args the command line arguments
-     */
-   
+
     public static void main(String[] args) throws IOException {
-        // TODO code application logic here
+  
             JFrame frame = new JFrame("LiczNo!");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setResizable(false);
@@ -41,7 +37,7 @@ public class Main {
             
                try
         {
-            f = Font.createFont(Font.TRUETYPE_FONT,new java.io.File("C:\\Users\\lasko\\Documents\\NetBeansProjects\\LiczNo\\LiczNo\\src\\liczno\\images\\SF-Pro-Display-Heavy.ttf"));
+            f = Font.createFont(Font.TRUETYPE_FONT,new java.io.File("C:\\Users\\lasko\\Documents\\NetBeansProjects\\LiczNo\\LiczNo\\src\\liczno\\images\\PassionOne-Bold.ttf"));
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(f);
         }
