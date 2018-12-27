@@ -44,28 +44,38 @@ public class Bombs {
     private List<Integer> selectedBlock;
     private List<Integer> selectedX;
     private int newValue;
+    private Player player;
     
-    public Bombs(int amount, ArrayList<Block> blocksList){
+    public Bombs(int amount, ArrayList<Block> blocksList, Player player){
         
         this.amount = amount;
         this.blocksList = blocksList;
         bombsList = new ArrayList<>();
         selectedBlock = new ArrayList<>();
         selectedX = new ArrayList<>();
+        this.player = player;
         init();
         
     }
     
     private void init(){
+        int tempx;
         generator = new Random();
            for(int i=0; i<amount; i++){
             
             newValue = generator.nextInt(blocksList.size());
-            if(selectedBlock.contains(newValue))i-- ;
+            if(selectedBlock.contains(newValue) || blocksList.get(newValue).getX() < player.x+player.width)
+                i-- ;
             else {
                 selectedBlock.add(newValue);
-                selectedX.add(generator.nextInt((int)blocksList.get(newValue).getWidth()));
-                bomb = new Bomb((int)blocksList.get(selectedBlock.get(i)).getX()+selectedX.get(i),
+
+                    tempx = generator.nextInt((int)blocksList.get(selectedBlock.get(i)).getWidth()-Bomb.bombWidth)
+                            +(int)blocksList.get(selectedBlock.get(i)).getX();
+
+
+                selectedX.add(tempx);
+                
+                bomb = new Bomb(selectedX.get(i),
                         (int)blocksList.get(selectedBlock.get(i)).getY()-Images.bomb.getHeight());
                 bombsList.add(bomb);
             }                      

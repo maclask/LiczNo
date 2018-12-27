@@ -9,14 +9,19 @@ import liczno.GameStates.GameStateManager;
 import javax.swing.JPanel;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.LayoutManager;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import javax.swing.OverlayLayout;
 
 /**
  *
  * @author Maciek
  */
-public class GamePanel extends JPanel implements Runnable, KeyListener{
+public class GamePanel extends JPanel implements Runnable, MouseListener, MouseMotionListener, KeyListener{
    
     public static final int WIDTH = 1024;
     public static final int HEIGHT = 768;
@@ -27,15 +32,18 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
     private Thread thread;
     private boolean isRunning = false;
     
-    private int FPS = 60;
-    private long targetTime = 1000 / FPS;
+    private final int FPS = 60;
+    private final long targetTime = 1000 / FPS;
+    
+    public Images images;
             
     public GamePanel(){
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
-        
+        addMouseListener(this);
+        addMouseMotionListener(this);
         addKeyListener(this);
         setFocusable(true);
-        Images images = new Images();
+        images = new Images();
         start();
     }
     
@@ -43,6 +51,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
         isRunning = true;
         thread = new Thread(this);
         thread.start();
+        
+        
+        LayoutManager overlay = new OverlayLayout(this);
+        this.setLayout(overlay);
     }
     
     @Override
@@ -95,5 +107,35 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
         
     @Override
     public void keyTyped(KeyEvent e) {}
+
+    @Override
+    public void mouseClicked(MouseEvent me) {
+        gsm.mouseClicked(me);
+    }
+
+    @Override
+    public void mousePressed(MouseEvent me) {
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent me) {
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent me) {
+    }
+
+    @Override
+    public void mouseExited(MouseEvent me) {
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent me) {
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent me) {
+        gsm.mouseMoved(me);
+    }
     
 } 

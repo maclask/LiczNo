@@ -22,10 +22,17 @@ import liczno.Images;
  */
 public class Player{
 
-    private boolean left = false, right = false, isJumping=false, isFalling=false, topCollision = false;
+    private boolean left = false, right = false, isJumping=false, isFalling=false, topCollision = false, leftfaced=false;
     public static boolean bombTouched = false;
     public static boolean solved = false;
-    private double x,y;
+    public static boolean isDead=false;
+    
+    public double x = 10; 
+    public double y = 10;
+    public int width = 152;
+    public int height = 165;
+    
+    public static int score = 0;
     
     private double jumpSpeed=10;
     private double currentJumpSpeed = jumpSpeed;
@@ -33,15 +40,19 @@ public class Player{
     private double maxFallSpeed = 10;
     private double currentFallSpeed = .1;
     
-    private int width, height;
+    private long lasttime=System.nanoTime();
+    private int iw = 0, ij = 0, ii = 0, id = 0;
+    
 
 
+    public Player(){
+    }
+    
     public Player(int x, int y, int width, int height){
         this.x = x;
-        this.y =y;
+        this.y = y;
         this.width = width;
         this.height = height;
-
     }
 
     public void tick(ArrayList<Block> b, ArrayList<Bomb> bombs){
@@ -79,8 +90,9 @@ public class Player{
             if(solved) {
                 bombs.remove(i);
                 bombTouched = false;
-                solved=false;
+                
             }
+            
         }
         }
         
@@ -121,19 +133,56 @@ public class Player{
         }
     }
     
-    public void draw(Graphics g){        
-        g.drawImage(Images.player, (int)x, (int)y, width, height, null);
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.draw(getBounds());
-        g2d.draw(getBoundsRight());
-        g2d.draw(getBoundsLeft());
-        g2d.draw(getBoundsTop());
+    public void draw(Graphics g){ 
+        if((left || right) && !isJumping){
+           if(System.nanoTime()-lasttime>=1000000000/60) {
+               iw++;
+               lasttime=System.nanoTime();
+           }
+           if(left) g.drawImage(Images.playerwalking[iw], (int)x+width, (int)y, -width, height, null);
+           else g.drawImage(Images.playerwalking[iw], (int)x, (int)y, width, height, null);
+           if(iw==Images.pw-1) iw=0;
+        }
+        
+            
+        else if(isJumping){
+            if(System.nanoTime()-lasttime>=1000000000/60) {
+               ij++;
+               lasttime=System.nanoTime();
+           }
+           if(leftfaced) g.drawImage(Images.playerjumping[ij], (int)x+width, (int)y, -width, height, null);
+           else g.drawImage(Images.playerjumping[ij], (int)x, (int)y, width, height, null);
+           if(ij==Images.pj-1) ij=0;
+        }
+        else if(isDead){
+            if(System.nanoTime()-lasttime>=1000000000/60) {
+               id++;
+               lasttime=System.nanoTime();
+           }
+           if(leftfaced) g.drawImage(Images.playerdie[id], (int)x+width, (int)y, -width, height, null);
+           else g.drawImage(Images.playerdie[id], (int)x, (int)y, width, height, null);
+           if(id==Images.pd-1) id=Images.pd-2;//gsm.states.add(new EndGameState(gsm));
+        }
+        else{
+            if(System.nanoTime()-lasttime>=1000000000/30) {
+               ii++;
+               lasttime=System.nanoTime();
+           }
+           if(leftfaced) g.drawImage(Images.playeridle[ii], (int)x+width, (int)y, -width, height, null);
+           else g.drawImage(Images.playeridle[ii], (int)x, (int)y, width, height, null);
+           if(ii==Images.pi-1) ii=0;
+        }
+//        Graphics2D g2d = (Graphics2D) g;
+//        g2d.draw(getBounds());
+//        g2d.draw(getBoundsRight());
+//        g2d.draw(getBoundsLeft());
+//        g2d.draw(getBoundsTop());
 
     }
     
     public void keyPressed(int k){
-        if(k == KeyEvent.VK_A || k == KeyEvent.VK_LEFT) left = true;
-        if(k == KeyEvent.VK_D || k == KeyEvent.VK_RIGHT) right = true;
+        if(k == KeyEvent.VK_A || k == KeyEvent.VK_LEFT) {left = true;leftfaced=true;}
+        if(k == KeyEvent.VK_D || k == KeyEvent.VK_RIGHT) {right = true;leftfaced=false;}
         if((k == KeyEvent.VK_W || k == KeyEvent.VK_UP ) && !isJumping) 
         {isJumping = true;
         isFalling=false;
@@ -145,8 +194,8 @@ public class Player{
     }
     
     public void keyReleased(int k){
-        if(k == KeyEvent.VK_A || k == KeyEvent.VK_LEFT) left = false;
-        if(k == KeyEvent.VK_D || k == KeyEvent.VK_RIGHT) right = false;
+        if(k == KeyEvent.VK_A || k == KeyEvent.VK_LEFT) {left = false;leftfaced=true;}
+        if(k == KeyEvent.VK_D || k == KeyEvent.VK_RIGHT) {right = false;leftfaced=false;}
 
     }
     

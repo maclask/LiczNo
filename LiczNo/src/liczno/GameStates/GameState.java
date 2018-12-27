@@ -6,6 +6,7 @@
 package liczno.GameStates;
 
 import java.awt.Graphics;
+import java.awt.event.MouseEvent;
 
 /**
  *
@@ -25,5 +26,7 @@ public abstract class GameState {
     public abstract void draw(Graphics g);
     public abstract void keyPressed(int k);
     public abstract void keyReleased(int k);
+    public abstract void mouseClicked(MouseEvent e);
+    public abstract void mouseMoved(MouseEvent e);
 
 }

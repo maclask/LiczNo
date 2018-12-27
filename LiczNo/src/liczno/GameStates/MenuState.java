@@ -11,6 +11,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -26,6 +27,7 @@ public class MenuState extends GameState{
     private String[] options = {"ROZPOCZNIJ GRĘ", "POMOC", "WYJDŹ"};
     private int currentSel = 0;
     private Font f2;
+    public static Level1State l1s;
     
     
     public MenuState(GameStateManager gsm){
@@ -50,7 +52,7 @@ public class MenuState extends GameState{
         g2d.setRenderingHint(
         RenderingHints.KEY_TEXT_ANTIALIASING,
         RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        f2 = liczno.Main.f.deriveFont(100F);
+        f2 = Images.f.deriveFont(100F);
         g2d.setFont(f2);
         g2d.setColor(Color.BLACK);
        g2d.drawImage(Images.bg, 0, 0, Images.bgWidth, Images.bgHeight, null);
@@ -91,7 +93,8 @@ public class MenuState extends GameState{
            switch (currentSel) {
            //start
                case 0:
-                   gsm.states.push(new Level1State(gsm));
+                   l1s = new Level1State(gsm);
+                   gsm.states.push(l1s);
                    break;
            //help
                case 1:
@@ -110,6 +113,14 @@ public class MenuState extends GameState{
     @Override
     public void keyReleased(int k) {
        
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
     }
    
 }

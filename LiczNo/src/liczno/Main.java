@@ -12,8 +12,16 @@ import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
-import javax.imageio.ImageIO;
+import java.io.InputStream;
+import java.net.URL;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 /**
  *
  * @author Maciek
@@ -21,10 +29,11 @@ import javax.swing.JFrame;
 public class Main {
 
     public static Font f;
+    public static JFrame frame;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, LineUnavailableException, UnsupportedAudioFileException {
   
-            JFrame frame = new JFrame("LiczNo!");
+            frame = new JFrame("LiczNo!");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setResizable(false);
             frame.setLayout(new BorderLayout());
@@ -35,17 +44,9 @@ public class Main {
             frame.setVisible(true);
             frame.setIconImage(Images.logo);
             
-               try
-        {
-            f = Font.createFont(Font.TRUETYPE_FONT,new java.io.File("C:\\Users\\lasko\\Documents\\NetBeansProjects\\LiczNo\\LiczNo\\src\\liczno\\images\\PassionOne-Bold.ttf"));
-            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            ge.registerFont(f);
-        }
-        catch(FontFormatException | IOException e)
-        {
-            System.out.println(e);
-        }
-           
+            
+                 
     }
     
 }
+
