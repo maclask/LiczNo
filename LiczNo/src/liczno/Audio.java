@@ -23,38 +23,126 @@
  */
 package liczno;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import javazoom.jl.player.Player;
 /**
  *
  * @author Maciek
  */
 public class Audio {
     
+    
+    private InputStream build, solved; 
     private Clip clip;
-    private AudioInputStream ais;
+    private AudioInputStream ais, sol,lv1;
+    Thread mp3;
+
     
     public Audio() throws LineUnavailableException, UnsupportedAudioFileException, IOException{
-//     File url = new File("E:\\Users\\Maciej\\Desktop\\AF\\Designer Sound FX\\Abstract (100)\\Beats (20)\\Casino.wav");
+//       build = getClass().getResourceAsStream("images/DM-CGS-04_1.wav");
+//       solved = getClass().getResourceAsStream("images/correct.wav");
+//
+//
 //     clip = AudioSystem.getClip();
 //        // getAudioInputStream() also accepts a File or InputStream
-//     ais = AudioSystem.getAudioInputStream(url);
-
+//     ais = AudioSystem.getAudioInputStream(build);
+//      sol = AudioSystem.getAudioInputStream(solved);
+        //lv1 = AudioSystem.getAudioInputStream(getClass().getResourceAsStream("images/Dog_and_Pony_Show.wav"));
+        
+        
+        
     }
     
     public void playMain() throws LineUnavailableException, IOException{
-       // clip.open(ais);
-       // clip.loop(Clip.LOOP_CONTINUOUSLY);
+        clip.open(ais);
+        clip.loop(Clip.LOOP_CONTINUOUSLY);
     }
     
+        public void playLv1() throws LineUnavailableException, IOException{
+          clip.open(lv1);  
+          FloatControl audioControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+             audioControl.setValue(-15.0f); //decrease volume 5 decibels
+        
+        clip.loop(Clip.LOOP_CONTINUOUSLY);
+    }
+    
+     public void playSol() throws LineUnavailableException, IOException{
+        clip.open(sol);
+        clip.start();
+    }
     public void stopMain(){
-       // clip.close();
+        clip.close();
     }
     
+    public void playLevelMp3(int level){
+        final int parameter = level;
+        
+        mp3 = new Thread(new Runnable(){
+            private Player player;
+            InputStream fis;
+            int p = parameter;
+            
+            public void run(){
+                
+                if(fis!=null)this.player.close();
+                try {
+                        switch(p){
+                            case 1:
+                               // InputStream input = getClass().getResourceAsStream("ListStopWords.txt");
+                                fis = getClass().getResourceAsStream("images/Dog_and_Pony_Show.mp3");
+                                break;
+                            case 2:
+                                fis = getClass().getResourceAsStream("images/Hidden_Agenda.mp3");
+                                break;
+                            case 3:
+                                fis = getClass().getResourceAsStream("images/The_Curious_Kitten.mp3");
+                                break;
+                            case 4:
+                                fis = getClass().getResourceAsStream("images/Dog_Park.mp3");
+                                break;
+                            case 5:
+                                fis = getClass().getResourceAsStream("images/Dog_and_Pony_Show.mp3");
+                                break;
+                            case -1:
+                                this.player.close();
+                                break;
+                            default:
+                                fis = getClass().getResourceAsStream("images/Dog_and_Pony_Show.mp3");
+                        }
+                       
+                        BufferedInputStream bis = new BufferedInputStream(fis);
+
+                        this.player = new Player(bis);
+              
+                        this.player.play();
+                        
+                        if (this.player.isComplete()) {
+                                this.player.play();
+                        }
+                } 
+                catch (Exception e) {
+                    e.printStackTrace();
+                    System.out.println("dupa");
+                }
+              }
+            
+        });
+        mp3.start();
+    }
+    
+    public void playLevelMp3a(){
+        mp3.stop();
+    
+    }
 }

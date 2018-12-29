@@ -56,10 +56,12 @@ public class Bombs {
         this.player = player;
         init();
         
+        
     }
     
     private void init(){
         int tempx;
+        if(amount>blocksList.size()) amount = blocksList.size()-3;
         generator = new Random();
            for(int i=0; i<amount; i++){
             

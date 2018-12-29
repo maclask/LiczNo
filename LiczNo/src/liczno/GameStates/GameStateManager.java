@@ -31,10 +31,9 @@ public class GameStateManager {
     public void draw(Graphics g){
         //to draw level and math task simultaneously
         if(Player.bombTouched){
-//            GameState top = states.empty() ? null : states.pop();
-//            states.peek().draw(g);
-//            states.push(top);
-           MenuState.l1s.draw(g);
+            GameState top = states.empty() ? null : states.pop();
+            states.peek().draw(g);
+            states.push(top);
         }
         states.peek().draw(g);
         

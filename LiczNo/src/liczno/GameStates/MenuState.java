@@ -6,9 +6,13 @@
 package liczno.GameStates;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -17,6 +21,8 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import liczno.GamePanel;
 import liczno.Images;
+import liczno.Main;
+import liczno.enterties.Player;
 
 /**
  *
@@ -27,7 +33,9 @@ public class MenuState extends GameState{
     private String[] options = {"ROZPOCZNIJ GRĘ", "POMOC", "WYJDŹ"};
     private int currentSel = 0;
     private Font f2;
-    public static Level1State l1s;
+    private Rectangle topbox;
+    private Rectangle[] optionsbox;
+    private Point click;
     
     
     public MenuState(GameStateManager gsm){
@@ -38,7 +46,8 @@ public class MenuState extends GameState{
     
     @Override
     public void init() {
-       
+       Main.frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+       optionsbox = new Rectangle[3];
     }
 
     @Override
@@ -52,25 +61,28 @@ public class MenuState extends GameState{
         g2d.setRenderingHint(
         RenderingHints.KEY_TEXT_ANTIALIASING,
         RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        f2 = Images.f.deriveFont(100F);
+        f2 = Images.f.deriveFont(150F);
         g2d.setFont(f2);
-        g2d.setColor(Color.BLACK);
+        g2d.setColor(Color.WHITE);
        g2d.drawImage(Images.bg, 0, 0, Images.bgWidth, Images.bgHeight, null);
        g2d.drawImage(Images.logo, GamePanel.WIDTH / 2 - 400, 350, 300, 300, null);
-       g2d.drawString("MENU", GamePanel.WIDTH/2-140+5,200+5);
-       g2d.setColor(Color.WHITE);
-        g2d.drawString("MENU", GamePanel.WIDTH/2-140,200);
+       
+       topbox = new Rectangle(GamePanel.WIDTH/4, GamePanel.HEIGHT/7, GamePanel.WIDTH/2,GamePanel.HEIGHT/4);
+       drawCenteredString(g,  "MENU", topbox, f2);
+       
+       
+       
+       f2 = f2.deriveFont(50F);
        for(int i=0; i<options.length; i++){
-          g2d.setFont(new Font(g2d.getFont().getFontName(), Font.PLAIN, 20)); 
-           g2d.setColor(Color.BLACK);
-           g2d.drawString(options[i], GamePanel.WIDTH / 2 +3, 400 + i * 100 +3);
            if(i==currentSel){
                g2d.setColor(new Color(255,213,109));
            }
            else{
                g2d.setColor(Color.WHITE);
            }
-           g2d.drawString(options[i], GamePanel.WIDTH / 2, 400 + i *100);
+           optionsbox[i] = new Rectangle(GamePanel.WIDTH/3*2, GamePanel.HEIGHT/2+50*i, GamePanel.WIDTH/6,GamePanel.HEIGHT/12);
+           drawCenteredString(g,  options[i], optionsbox[i], f2);
+          // g2d.drawString(options[i], GamePanel.WIDTH / 2, 400 + i *100);
        }
     }
 
@@ -93,8 +105,7 @@ public class MenuState extends GameState{
            switch (currentSel) {
            //start
                case 0:
-                   l1s = new Level1State(gsm);
-                   gsm.states.push(l1s);
+                   gsm.states.push(new EndGameState(gsm,0,Player.isDead));
                    break;
            //help
                case 1:
@@ -117,10 +128,30 @@ public class MenuState extends GameState{
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        click = new Point(e.getX(), e.getY());
+        checkClick();
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
     }
    
+    public void drawCenteredString(Graphics g, String text, Rectangle rect, Font font) {
+        FontMetrics metrics = g.getFontMetrics(font);
+        int x = rect.x + (rect.width - metrics.stringWidth(text)) / 2;
+        int y = rect.y + ((rect.height - metrics.getHeight()) / 2) + metrics.getAscent();
+        g.setFont(font);
+        g.drawString(text, x, y);
+    }
+    private void checkClick(){
+        if(optionsbox[0].contains(click)){
+            gsm.states.push(new EndGameState(gsm,0,Player.isDead));
+        }
+        else if(optionsbox[1].contains(click)){
+            
+        }
+        else if(optionsbox[2].contains(click)){
+            System.exit(0);
+        }
+    }
 }

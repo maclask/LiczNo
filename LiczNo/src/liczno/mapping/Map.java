@@ -61,7 +61,7 @@ public class Map {
             for(int x=0;x<width; x++){
                 switch(Integer.parseInt(tokens[x])){
                     case 1:
-                        blocks[y][x]=new Block(x * Block.blockWidth, y * Block.blockHeight);
+                        blocks[y][x]=new Block(x * Block.blockWidth/2, y * Block.blockHeight);
                         blocksList.add(blocks[y][x]);
                         break;
                     case 0:

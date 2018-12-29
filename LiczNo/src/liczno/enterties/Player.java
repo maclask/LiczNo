@@ -28,7 +28,7 @@ public class Player{
     public static boolean isDead=false;
     
     public double x = 10; 
-    public double y = 10;
+    public double y = 650;
     public int width = 152;
     public int height = 165;
     
@@ -42,19 +42,27 @@ public class Player{
     
     private long lasttime=System.nanoTime();
     private int iw = 0, ij = 0, ii = 0, id = 0;
-    
+
 
 
     public Player(){
+        reset();
     }
+    
     
     public Player(int x, int y, int width, int height){
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
+        reset();
     }
 
+    private void reset(){
+        bombTouched = false;
+        solved = false;
+        isDead=false;
+    }
     public void tick(ArrayList<Block> b, ArrayList<Bomb> bombs){
         //movement
         if(left) x-=1.5;
@@ -134,8 +142,8 @@ public class Player{
     }
     
     public void draw(Graphics g){ 
-        if((left || right) && !isJumping){
-           if(System.nanoTime()-lasttime>=1000000000/60) {
+        if((left || right) && !isJumping && !bombTouched){
+           if(System.nanoTime()-lasttime>=1000000000/40) {
                iw++;
                lasttime=System.nanoTime();
            }
@@ -145,7 +153,7 @@ public class Player{
         }
         
             
-        else if(isJumping){
+        else if(isJumping && !bombTouched){
             if(System.nanoTime()-lasttime>=1000000000/60) {
                ij++;
                lasttime=System.nanoTime();
@@ -186,10 +194,9 @@ public class Player{
         if((k == KeyEvent.VK_W || k == KeyEvent.VK_UP ) && !isJumping) 
         {isJumping = true;
         isFalling=false;
+        ij=0;
         }
-        
-        
-          //if(k == KeyEvent.VK_R) x=0;y=0;
+
 
     }
     

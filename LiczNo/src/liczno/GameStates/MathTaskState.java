@@ -34,13 +34,20 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import liczno.Audio;
 import liczno.GamePanel;
 import liczno.Images;
 import liczno.Main;
 import liczno.enterties.Player;
+
 
 /**
  *
@@ -58,9 +65,11 @@ public class MathTaskState extends GameState{
     private Rectangle inputbox, taskbox, okbox, closebox;
     private Point click = new Point(0,0), hover = new Point(0,0);
     
-    private int time=10;
+    private int time=12;
     private long lasttime=System.nanoTime();
             
+    private Audio a;
+    
     Random generator;
     
     public MathTaskState(GameStateManager gsm) {
@@ -74,6 +83,16 @@ public class MathTaskState extends GameState{
             task();
         while(solution<0 || solution>150);
         
+//        try {
+//            a = new Audio();
+//        } catch (LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
+//            Logger.getLogger(Level1State.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        try {
+//            a.playMain();
+//        } catch (LineUnavailableException | IOException ex) {
+//            Logger.getLogger(Level1State.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         
      }      
        
@@ -86,10 +105,15 @@ public class MathTaskState extends GameState{
             time--;
             lasttime=System.nanoTime();
         }
-        if(time<0)close();
+        if(time<0){
+            time=0;
+            close();
+        }
+
     }
     
     public void draw(Graphics g){
+        
         g.setColor(Color.WHITE);
         g.fillRect(GamePanel.WIDTH/2-width/2,GamePanel.HEIGHT/2-height/2,width,height);
         
@@ -168,21 +192,30 @@ enter();
         }
             if(ans==solution) 
             {
+           // try {
                 solved=true;
-            Player.bombTouched=false;
-            Player.solved=true;
-            Player.score+=time;
-            Main.frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-            gsm.states.pop();
+                Player.bombTouched=false;
+                Player.solved=true;
+                Player.score+=time;
+                Main.frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+//                a.stopMain();
+//                a.playSol();
+                gsm.states.pop();
+//            } catch (LineUnavailableException ex) {
+//                Logger.getLogger(MathTaskState.class.getName()).log(Level.SEVERE, null, ex);
+//            } catch (IOException ex) {
+//                Logger.getLogger(MathTaskState.class.getName()).log(Level.SEVERE, null, ex);
+//            }
             
             }
             else{
                 Player.bombTouched=false;
                 Player.solved=true;
                 Main.frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                //a.stopMain();
                 Player.isDead=true;
                 gsm.states.pop();
-                //gsm.states.add(new EndGameState(gsm));
+                //gsm.states.add(new EndGameState(gsm, 0, Player.isDead));
             }
                 
         return solved;
