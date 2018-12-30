@@ -58,7 +58,7 @@ public class Level1State extends GameState{
     
     @Override
     public void init() {
-       bombamount = 1;
+       bombamount = 6;
        level = 1;
        player = new Player();
        map = new Map("map2");

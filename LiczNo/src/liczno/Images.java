@@ -25,7 +25,7 @@ public class Images {
       
     public static BufferedImage[] playerwalking, playerjumping, playerdie, playeridle;
     public static final int pw=20, pj=30, pi=16, pd=30;
-    public static BufferedImage bg, logo, player, block, icon, bomb, close;
+    public static BufferedImage bg, logo, block, icon, bomb, close;
     public static int bgWidth, bgHeight, logoWidth, logoHeight;
     public static Font f;
     
@@ -33,10 +33,9 @@ public class Images {
        //blocks = new BufferedImage[1];
         
         try {
-            block= ImageIO.read(getClass().getResourceAsStream("images/block2.png"));
+            block= ImageIO.read(getClass().getResourceAsStream("images/block.png"));
             bg = ImageIO.read(getClass().getResource("images/bg.png"));
             logo = ImageIO.read(getClass().getResource("images/logo.png"));
-            player = ImageIO.read(getClass().getResource("images/player.png"));
             icon = ImageIO.read(getClass().getResource("images/logo.small.png"));
             bomb = ImageIO.read(getClass().getResource("images/bomb.png"));
             close = ImageIO.read(getClass().getResource("images/close.png"));
@@ -89,7 +88,7 @@ public class Images {
        
        
        
-       InputStream is = getClass().getResourceAsStream("images/Staatliches-Regular.ttf");
+       InputStream is = getClass().getResourceAsStream("font/Staatliches-Regular.ttf");
             //File file = new java.io.File("src/liczno/images/Staatliches-Regular.ttf");
                try
         {

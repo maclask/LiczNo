@@ -77,22 +77,21 @@ public class MathTaskState extends GameState{
     }
     
     public void init(){
-        input = new ArrayList<>();    
-        generator = new Random();
-        do
-            task();
-        while(solution<0 || solution>150);
         
-//        try {
-//            a = new Audio();
-//        } catch (LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
-//            Logger.getLogger(Level1State.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        try {
-//            a.playMain();
-//        } catch (LineUnavailableException | IOException ex) {
-//            Logger.getLogger(Level1State.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+            input = new ArrayList<>();
+            generator = new Random();
+            do
+                task();
+            while(solution<0 || solution>150);
+            
+          try {  
+            a = new Audio();
+            a.play(1,true);
+        } catch (LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
+            Logger.getLogger(MathTaskState.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+
         
      }      
        
@@ -198,21 +197,28 @@ enter();
                 Player.solved=true;
                 Player.score+=time;
                 Main.frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-//                a.stopMain();
-//                a.playSol();
+                a.stop();
+            try {
+                a.play(2,false);
+            } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
+                Logger.getLogger(MathTaskState.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
                 gsm.states.pop();
-//            } catch (LineUnavailableException ex) {
-//                Logger.getLogger(MathTaskState.class.getName()).log(Level.SEVERE, null, ex);
-//            } catch (IOException ex) {
-//                Logger.getLogger(MathTaskState.class.getName()).log(Level.SEVERE, null, ex);
-//            }
+
             
             }
             else{
                 Player.bombTouched=false;
                 Player.solved=true;
                 Main.frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                //a.stopMain();
+                a.stop();
+            try {
+                a.play(4,false);
+            } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
+                Logger.getLogger(MathTaskState.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
                 Player.isDead=true;
                 gsm.states.pop();
                 //gsm.states.add(new EndGameState(gsm, 0, Player.isDead));

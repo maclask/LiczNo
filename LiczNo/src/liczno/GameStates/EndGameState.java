@@ -34,7 +34,13 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import liczno.Audio;
 import liczno.GamePanel;
 import liczno.Images;
 import liczno.Main;
@@ -56,6 +62,7 @@ public class EndGameState extends GameState{
     private int text;
     private boolean dead,enter=false;
     private String print;
+    private Audio a;
             
     EndGameState(GameStateManager gsm, int text, boolean dead){
         super(gsm);
@@ -70,6 +77,17 @@ public class EndGameState extends GameState{
         hover = new Point(0,0);
         score = "Twój wynik: " + Player.score;
         boxes = new ArrayList();
+        try {
+            a = new Audio();
+        } catch (LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
+            Logger.getLogger(EndGameState.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+                a.play(3,false);
+            } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
+                Logger.getLogger(Level1State.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        
     }
 
     @Override
@@ -132,8 +150,7 @@ public class EndGameState extends GameState{
         if(k == KeyEvent.VK_ENTER) {
             enter=true;
             checkClick();
-        }
-        
+        }        
     }
 
     @Override
@@ -161,6 +178,7 @@ public class EndGameState extends GameState{
     
     private void checkClick(){
         if(nextbox.contains(click) || enter){
+            a.stop();
             if(dead) {
                 Player.score = 0;
                 Player.isDead=false;

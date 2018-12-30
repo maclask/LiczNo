@@ -7,18 +7,13 @@ package liczno.GameStates;
 
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import javax.imageio.ImageIO;
+import liczno.Button;
 import liczno.GamePanel;
 import liczno.Images;
 import liczno.Main;
@@ -30,24 +25,30 @@ import liczno.enterties.Player;
  */
 public class MenuState extends GameState{
 
-    private String[] options = {"ROZPOCZNIJ GRĘ", "POMOC", "WYJDŹ"};
+    private final String[] options = {"ROZPOCZNIJ GRĘ", "POMOC", "WYJDŹ"};
     private int currentSel = 0;
-    private Font f2;
-    private Rectangle topbox;
-    private Rectangle[] optionsbox;
-    private Point click;
+    private Button topbox;
+    private Point click, hover;
+    private Button[] buttons;
     
     
     public MenuState(GameStateManager gsm){
         super(gsm);
-       init();
-  
+        buttons = new Button[options.length];
+        for(int i=0; i<options.length; i++){
+        buttons[i] = new Button(GamePanel.WIDTH/2, GamePanel.HEIGHT/2+80*i, 
+                GamePanel.WIDTH/3,GamePanel.HEIGHT/12, new Color(0,0,0,0),Color.WHITE,
+                50, options[i]);
+       }
+        
+        topbox = new Button(GamePanel.WIDTH/4, GamePanel.HEIGHT/7, 
+                GamePanel.WIDTH/2,GamePanel.HEIGHT/4, 150, "MENU");
+
     }
     
     @Override
     public void init() {
-       Main.frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-       optionsbox = new Rectangle[3];
+       Main.frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR)); 
     }
 
     @Override
@@ -61,28 +62,24 @@ public class MenuState extends GameState{
         g2d.setRenderingHint(
         RenderingHints.KEY_TEXT_ANTIALIASING,
         RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        f2 = Images.f.deriveFont(150F);
-        g2d.setFont(f2);
-        g2d.setColor(Color.WHITE);
+
+
        g2d.drawImage(Images.bg, 0, 0, Images.bgWidth, Images.bgHeight, null);
        g2d.drawImage(Images.logo, GamePanel.WIDTH / 2 - 400, 350, 300, 300, null);
        
-       topbox = new Rectangle(GamePanel.WIDTH/4, GamePanel.HEIGHT/7, GamePanel.WIDTH/2,GamePanel.HEIGHT/4);
-       drawCenteredString(g,  "MENU", topbox, f2);
+       topbox.drawButton(g);
        
-       
-       
-       f2 = f2.deriveFont(50F);
+
        for(int i=0; i<options.length; i++){
            if(i==currentSel){
-               g2d.setColor(new Color(255,213,109));
+               buttons[i].txtColor = Color.WHITE;
+               buttons[i].bgColor = new Color(255,213,109);
            }
            else{
-               g2d.setColor(Color.WHITE);
+               buttons[i].txtColor = new Color(255,213,109);
+               buttons[i].bgColor = new Color(0,0,0,0);
            }
-           optionsbox[i] = new Rectangle(GamePanel.WIDTH/3*2, GamePanel.HEIGHT/2+50*i, GamePanel.WIDTH/6,GamePanel.HEIGHT/12);
-           drawCenteredString(g,  options[i], optionsbox[i], f2);
-          // g2d.drawString(options[i], GamePanel.WIDTH / 2, 400 + i *100);
+           buttons[i].drawButton(g);
        }
     }
 
@@ -134,23 +131,25 @@ public class MenuState extends GameState{
 
     @Override
     public void mouseMoved(MouseEvent e) {
+        hover = new Point(e.getX(), e.getY());
+        for(int i=0; i<options.length; i++)
+        if(buttons[i].contains(hover)) {
+            currentSel=i;
+            Main.frame.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        }
+         // else 
+            //Main.frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        
     }
-   
-    public void drawCenteredString(Graphics g, String text, Rectangle rect, Font font) {
-        FontMetrics metrics = g.getFontMetrics(font);
-        int x = rect.x + (rect.width - metrics.stringWidth(text)) / 2;
-        int y = rect.y + ((rect.height - metrics.getHeight()) / 2) + metrics.getAscent();
-        g.setFont(font);
-        g.drawString(text, x, y);
-    }
+
     private void checkClick(){
-        if(optionsbox[0].contains(click)){
+        if(buttons[0].contains(click)){
             gsm.states.push(new EndGameState(gsm,0,Player.isDead));
         }
-        else if(optionsbox[1].contains(click)){
+        else if(buttons[1].contains(click)){
             
         }
-        else if(optionsbox[2].contains(click)){
+        else if(buttons[2].contains(click)){
             System.exit(0);
         }
     }
