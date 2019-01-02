@@ -43,26 +43,40 @@ import javazoom.jl.player.Player;
 public class Audio {
     
     
-    private InputStream build, solved; 
+    private InputStream [] bufferedIn; 
     private Clip clip;
-    private AudioInputStream ais;
+    private AudioInputStream[] ais;
     Thread mp3;
 
-    String[] url ={"sfx/Dog_and_Pony_Show.wav","sfx/time.wav","sfx/correct.wav","sfx/nextlevel.wav","sfx/wrong.wav","sfx/click.wav"};
+    String[] url ={"sfx/solved.wav","sfx/time.wav","sfx/correct.wav","sfx/nextlevel.wav","sfx/wrong.wav","sfx/click.wav"};
     
     
     public Audio() throws LineUnavailableException, UnsupportedAudioFileException, IOException{
             clip = AudioSystem.getClip();
-                     
+            ais  = new AudioInputStream[url.length];
+            bufferedIn = new InputStream[url.length];
+            for(int i=0; i<url.length; i++){
+                bufferedIn[i] = new BufferedInputStream(getClass().getResourceAsStream(url[i]));        
+                ais[i] = AudioSystem.getAudioInputStream(bufferedIn[i]);  
+            }
     }
     
     public void play(int track, boolean loop) throws LineUnavailableException, IOException, UnsupportedAudioFileException{
-        if(clip.isOpen())clip.close();
-        ais = AudioSystem.getAudioInputStream(getClass().getResourceAsStream(url[track]));   
-        clip.open(ais);
-        clip.start();
+        if(clip.isOpen()) {
+            System.out.println("isopen");
+            clip.stop();
+            System.out.println("stop");
+            clip.close();
+            System.out.println("close");
+            
+        }
+       if(ais[track].available()==0)
+       ais[track].reset();System.out.println("reset");
+        clip.open(ais[track]);System.out.println("open track");
+        
+        clip.start();System.out.println("start");
         if(loop)
-        clip.loop(Clip.LOOP_CONTINUOUSLY);
+        clip.loop(Clip.LOOP_CONTINUOUSLY);System.out.println("loop");
     }
     
 //        public void playLv1() throws LineUnavailableException, IOException{
@@ -89,35 +103,36 @@ public class Audio {
             private Player player;
             InputStream is;
             int p = parameter;
-            
+            final static String FOLDER = "music/";
+            String [] track = {"Dog_and_Pony_Show.mp3","Hidden_Agenda.mp3","The_Curious_Kitten.mp3","Dog_Park.mp3","Brain_Trust.mp3"};
+            String path = FOLDER;
             public void run(){
                 
                 if(is!=null)this.player.close();
                 try {
                         switch(p){
                             case 1:
-                               // InputStream input = getClass().getResourceAsStream("ListStopWords.txt");
-                                is = getClass().getResourceAsStream("music/Dog_and_Pony_Show.mp3");
+                               path += track[0];
                                 break;
                             case 2:
-                                is = getClass().getResourceAsStream("music/Hidden_Agenda.mp3");
+                                path += track[1];
                                 break;
                             case 3:
-                                is = getClass().getResourceAsStream("music/The_Curious_Kitten.mp3");
+                                path += track[2];
                                 break;
                             case 4:
-                                is = getClass().getResourceAsStream("music/Dog_Park.mp3");
+                                path += track[3];
                                 break;
                             case 5:
-                                is = getClass().getResourceAsStream("music/Dog_and_Pony_Show.mp3");
+                                path += track[4];
                                 break;
                             case -1:
                                 this.player.close();
                                 break;
                             default:
-                                is = getClass().getResourceAsStream("music/Dog_and_Pony_Show.mp3");
+                                path += track[0];
                         }
-                       
+                        is = getClass().getResourceAsStream(path);
                         BufferedInputStream bis = new BufferedInputStream(is);
 
                         this.player = new Player(bis);

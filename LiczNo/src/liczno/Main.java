@@ -30,9 +30,11 @@ public class Main {
 
     public static Font f;
     public static JFrame frame;
+    public static Audio audio;
 
     public static void main(String[] args) throws IOException, LineUnavailableException, UnsupportedAudioFileException {
-  
+             audio = new Audio();
+            
             frame = new JFrame("LiczNo!");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setResizable(false);
@@ -45,8 +47,12 @@ public class Main {
             frame.setIconImage(Images.logo);
             
             
+            System.out.println(System.getProperty("user.dir"));
                  
     }
+                        
+                            
+    
     
 }
 

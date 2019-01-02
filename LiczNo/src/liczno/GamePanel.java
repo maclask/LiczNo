@@ -5,6 +5,7 @@
  */
 package liczno;
 
+
 import liczno.GameStates.GameStateManager;
 import javax.swing.JPanel;
 import java.awt.Dimension;
@@ -15,7 +16,12 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.IOException;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.OverlayLayout;
+import liczno.GameStates.SaveScore;
 
 /**
  *
@@ -36,6 +42,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
     private final long targetTime = 1000 / FPS;
     
     public Images images;
+    public static SaveScore score;
             
     public GamePanel(){
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -44,7 +51,10 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
         addKeyListener(this);
         setFocusable(true);
         images = new Images();
+        score = new SaveScore();
         start();
+        //Map a = score.readScore();
+        
     }
     
     public void start(){

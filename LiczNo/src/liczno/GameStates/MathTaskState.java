@@ -68,7 +68,7 @@ public class MathTaskState extends GameState{
     private int time=12;
     private long lasttime=System.nanoTime();
             
-    private Audio a;
+
     
     Random generator;
     
@@ -85,8 +85,8 @@ public class MathTaskState extends GameState{
             while(solution<0 || solution>150);
             
           try {  
-            a = new Audio();
-            a.play(1,true);
+           
+            Main.audio.play(1,true);
         } catch (LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
             Logger.getLogger(MathTaskState.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -197,9 +197,9 @@ enter();
                 Player.solved=true;
                 Player.score+=time;
                 Main.frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                a.stop();
+                Main.audio.stop();
             try {
-                a.play(2,false);
+                Main.audio.play(2,false);
             } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
                 Logger.getLogger(MathTaskState.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -212,16 +212,17 @@ enter();
                 Player.bombTouched=false;
                 Player.solved=true;
                 Main.frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                a.stop();
+                Main.audio.stop();
+                 Main.audio.playLevelMp3a();
             try {
-                a.play(4,false);
+                Main.audio.play(4,false);
             } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
                 Logger.getLogger(MathTaskState.class.getName()).log(Level.SEVERE, null, ex);
             }
 
                 Player.isDead=true;
-                gsm.states.pop();
-                //gsm.states.add(new EndGameState(gsm, 0, Player.isDead));
+               // gsm.states.pop();
+                gsm.states.add(new EndGameState(gsm, 0, Player.isDead));
             }
                 
         return solved;

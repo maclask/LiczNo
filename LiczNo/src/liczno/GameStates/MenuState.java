@@ -13,6 +13,11 @@ import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import liczno.Button;
 import liczno.GamePanel;
 import liczno.Images;
@@ -44,11 +49,13 @@ public class MenuState extends GameState{
         topbox = new Button(GamePanel.WIDTH/4, GamePanel.HEIGHT/7, 
                 GamePanel.WIDTH/2,GamePanel.HEIGHT/4, 150, "MENU");
 
+        
     }
     
     @Override
     public void init() {
-       Main.frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR)); 
+       Main.frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+       Main.audio.playLevelMp3(5);
     }
 
     @Override
@@ -99,13 +106,17 @@ public class MenuState extends GameState{
        }
        
        if(k == KeyEvent.VK_ENTER){
+           
            switch (currentSel) {
            //start
                case 0:
+                   Main.audio.playLevelMp3a();
                    gsm.states.push(new EndGameState(gsm,0,Player.isDead));
                    break;
            //help
                case 1:
+                    Main.audio.playLevelMp3a();
+                   gsm.states.push(new SaveScoreState(gsm));
                    break;               
            //exit
                case 2:

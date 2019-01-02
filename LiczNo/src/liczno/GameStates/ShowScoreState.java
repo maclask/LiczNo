@@ -36,6 +36,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sound.sampled.LineUnavailableException;
@@ -50,23 +51,20 @@ import liczno.enterties.Player;
  *
  * @author Maciek
  */
-public class EndGameState extends GameState{
+public class ShowScoreState extends GameState{
 
     private Rectangle topbox, scorebox, backbox, nextbox;
     private ArrayList<Rectangle> boxes;
     private String score;
     Point click, hover;
+    private Map scores;
     
-    private final String [] level = {"Poziom 1","Poziom 2","Poziom 3","Poziom 4","Poziom 5","Ukończyłeś grę"};
-    private final String [] textes ={"Nie żyjesz"};
     private int text;
-    private boolean dead,enter=false;
+    private boolean enter=false;
     private String print;
             
-    EndGameState(GameStateManager gsm, int text, boolean dead){
+    ShowScoreState(GameStateManager gsm){
         super(gsm);
-        this.text = text;
-        this.dead = dead;
     }
     
     @Override
@@ -76,14 +74,11 @@ public class EndGameState extends GameState{
         hover = new Point(0,0);
         score = "Twój wynik: " + Player.score;
         boxes = new ArrayList();
-       
-        try {
-                Main.audio.play(3,false);
-            } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
-                Logger.getLogger(LevelState.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        
+        print = "Najlepsze wyniki";
+        scores = GamePanel.score.readScore();
     }
+    
+    
 
     @Override
     public void tick() {
@@ -101,8 +96,7 @@ public class EndGameState extends GameState{
         g.setFont(f2);
         g.setColor(Color.WHITE);
         
-        if(dead) print = textes[text];
-        else print = level[text];
+
         
 
         //g.drawString(print, GamePanel.WIDTH/4, GamePanel.HEIGHT/5*3);
@@ -117,7 +111,7 @@ public class EndGameState extends GameState{
         }
        
         
-        if(dead){
+       
             backbox = new Rectangle(GamePanel.WIDTH/4, GamePanel.HEIGHT/5*4, GamePanel.WIDTH/4,GamePanel.HEIGHT/6);
             boxes.add(backbox);
             g.setColor(new Color(255, 51, 51));
@@ -130,15 +124,7 @@ public class EndGameState extends GameState{
             g.fillRect(GamePanel.WIDTH/4*2, GamePanel.HEIGHT/5*4, GamePanel.WIDTH/4,GamePanel.HEIGHT/6);
             g.setColor(Color.WHITE);
             drawCenteredString(g, "Restart", nextbox, f2);
-        }
-        else{
-            nextbox = new Rectangle(GamePanel.WIDTH/8*3, GamePanel.HEIGHT/5*4, GamePanel.WIDTH/4,GamePanel.HEIGHT/6);
-            boxes.add(nextbox);
-            g.setColor(new Color(50,120,54));
-            g.fillRect(GamePanel.WIDTH/8*3, GamePanel.HEIGHT/5*4, GamePanel.WIDTH/4,GamePanel.HEIGHT/6);
-            g.setColor(Color.WHITE);
-            drawCenteredString(g, "Dalej", nextbox, f2);
-        }
+       
             
 
     }
@@ -177,37 +163,9 @@ public class EndGameState extends GameState{
     private void checkClick(){
         if(nextbox.contains(click) || enter){
             Main.audio.stop();
-            if(dead) {
-                Player.score = 0;
-                Player.isDead=false;
-                gsm.states.add(new EndGameState(gsm,0,Player.isDead));
-            }
-            else{
-               
-            
-                switch(text){
-                    case 0:
-                        gsm.states.add(new LevelState(gsm, 1, 6));
-                        break;
-                    case 1:
-                        gsm.states.add(new LevelState(gsm, 2, 4));
-                        break;
-                    case 2:
-                        gsm.states.add(new LevelState(gsm, 3, 4));
-                        break;
-                    case 3:
-                       gsm.states.add(new LevelState(gsm, 4, 4));
-                        break;
-                    case 4:
-                       gsm.states.add(new LevelState(gsm, 5, 4));
-                        break;
-                    default:
-                        gsm.states.add(new MenuState(gsm));
-                }
-            }
             
         }
-        else if(dead && backbox.contains(click)){
+        else if( backbox.contains(click)){
             gsm.states.add(new MenuState(gsm));
         }
     }

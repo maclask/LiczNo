@@ -13,7 +13,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import liczno.GamePanel;
 import liczno.GameStates.GameStateManager;
-import liczno.GameStates.Level1State;
+import liczno.GameStates.LevelState;
 import liczno.Images;
 
 /**
@@ -67,6 +67,7 @@ public class Player{
         //movement
         if(left) x-=1.5;
         if(right) x+=1.5;
+        
         
         if(isJumping && !isFalling){
             y -= currentJumpSpeed;

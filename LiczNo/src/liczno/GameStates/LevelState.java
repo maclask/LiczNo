@@ -36,14 +36,7 @@ import liczno.mapping.Map;
  *
  * @author Maciek
  */
-public class Level1State extends GameState{
-    
-    public Level1State(GameStateManager gsm){
-        super(gsm);
-        //init(); 
-
-    }
-
+public class LevelState extends GameState{
     Player player;
     Map map;
     Bombs bombs;
@@ -51,27 +44,29 @@ public class Level1State extends GameState{
     int level;
     private long lasttime=System.nanoTime();
     private MathTaskState task;
-    Audio a;
     int bombamount;
     Rectangle backbox;
     Point click;
     
+    public LevelState(GameStateManager gsm, int level, int bombamount){
+        super(gsm);
+        this.bombamount = bombamount;
+        this.level = level;
+        //init(); 
+        player = new Player();
+        map = new Map("map2");System.out.println(this.bombamount);
+        bombs = new Bombs(bombamount,map.getBlocks(),player);
+        this.bombamount = bombs.getBombs().size();
+        Main.audio.playLevelMp3(level);
+        Main.frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+
+    }
+
+    
+    
     @Override
     public void init() {
-       bombamount = 6;
-       level = 1;
-       player = new Player();
-       map = new Map("map2");
-       bombs = new Bombs(bombamount,map.getBlocks(),player);
-        bombamount = bombs.getBombs().size();
-        try {
-            a = new Audio();
-            a.playLevelMp3(level);
-
-        } catch (LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
-            Logger.getLogger(Level1State.class.getName()).log(Level.SEVERE, null, ex);
-        }
-Main.frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        
    
     }
 
@@ -106,7 +101,7 @@ Main.frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         if(bombamount == 0){
             Player.score += time;
             bombamount--; //to stop adding time
-            a.playLevelMp3a();
+            Main.audio.playLevelMp3a();
             
             gsm.states.add(new EndGameState(gsm, level, Player.isDead));
         }

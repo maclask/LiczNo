@@ -36,6 +36,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sound.sampled.LineUnavailableException;
@@ -50,23 +51,21 @@ import liczno.enterties.Player;
  *
  * @author Maciek
  */
-public class EndGameState extends GameState{
+public class SaveScoreState extends GameState{
 
-    private Rectangle topbox, scorebox, backbox, nextbox;
+    private List<Character> input;
+    private Rectangle topbox, inputbox, scorebox, backbox, nextbox;
     private ArrayList<Rectangle> boxes;
     private String score;
     Point click, hover;
     
-    private final String [] level = {"Poziom 1","Poziom 2","Poziom 3","Poziom 4","Poziom 5","Ukończyłeś grę"};
-    private final String [] textes ={"Nie żyjesz"};
-    private int text;
-    private boolean dead,enter=false;
-    private String print;
+
+    private boolean enter=false;
+    private String print = "Podaj imię";
+    private static  String name = "";
             
-    EndGameState(GameStateManager gsm, int text, boolean dead){
+    SaveScoreState(GameStateManager gsm){
         super(gsm);
-        this.text = text;
-        this.dead = dead;
     }
     
     @Override
@@ -76,13 +75,8 @@ public class EndGameState extends GameState{
         hover = new Point(0,0);
         score = "Twój wynik: " + Player.score;
         boxes = new ArrayList();
-       
-        try {
-                Main.audio.play(3,false);
-            } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
-                Logger.getLogger(LevelState.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        
+        input = new ArrayList();
+              
     }
 
     @Override
@@ -100,9 +94,7 @@ public class EndGameState extends GameState{
         Font f2 = Images.f.deriveFont(100F);
         g.setFont(f2);
         g.setColor(Color.WHITE);
-        
-        if(dead) print = textes[text];
-        else print = level[text];
+
         
 
         //g.drawString(print, GamePanel.WIDTH/4, GamePanel.HEIGHT/5*3);
@@ -111,44 +103,46 @@ public class EndGameState extends GameState{
         
         f2 = f2.deriveFont(60F);
         g.setFont(f2);
-        if(text!=0){
-            scorebox = new Rectangle(GamePanel.WIDTH/4, GamePanel.HEIGHT/5*2, GamePanel.WIDTH/2,GamePanel.HEIGHT/4);
-            drawCenteredString(g, score, scorebox, f2);
-        }
-       
         
-        if(dead){
-            backbox = new Rectangle(GamePanel.WIDTH/4, GamePanel.HEIGHT/5*4, GamePanel.WIDTH/4,GamePanel.HEIGHT/6);
-            boxes.add(backbox);
-            g.setColor(new Color(255, 51, 51));
-            g.fillRect(GamePanel.WIDTH/4, GamePanel.HEIGHT/5*4, GamePanel.WIDTH/4,GamePanel.HEIGHT/6);
-            g.setColor(Color.WHITE);
-            drawCenteredString(g, "Menu", backbox, f2);
-            nextbox = new Rectangle(GamePanel.WIDTH/4*2, GamePanel.HEIGHT/5*4, GamePanel.WIDTH/4,GamePanel.HEIGHT/6);
-            boxes.add(nextbox);
-            g.setColor(new Color(50,120,54));
-            g.fillRect(GamePanel.WIDTH/4*2, GamePanel.HEIGHT/5*4, GamePanel.WIDTH/4,GamePanel.HEIGHT/6);
-            g.setColor(Color.WHITE);
-            drawCenteredString(g, "Restart", nextbox, f2);
+        inputbox = new Rectangle(370,414,384,86);
+        g.setColor(new Color(191,191,191));
+        g.fillRect(370,414,384,86);
+
+        name="";
+        for(int i =0; i<input.size(); i++){
+            name += Character.toString (input.get(i));
         }
-        else{
+        g.setColor(Color.BLACK);
+        drawCenteredString(g, name, inputbox, f2);
+        
+
             nextbox = new Rectangle(GamePanel.WIDTH/8*3, GamePanel.HEIGHT/5*4, GamePanel.WIDTH/4,GamePanel.HEIGHT/6);
             boxes.add(nextbox);
             g.setColor(new Color(50,120,54));
             g.fillRect(GamePanel.WIDTH/8*3, GamePanel.HEIGHT/5*4, GamePanel.WIDTH/4,GamePanel.HEIGHT/6);
             g.setColor(Color.WHITE);
-            drawCenteredString(g, "Dalej", nextbox, f2);
-        }
+            drawCenteredString(g, "Zapisz", nextbox, f2);
+        
             
 
     }
 
     @Override
     public void keyPressed(int k) {
-        if(k == KeyEvent.VK_ENTER) {
+        
+        if((k >= 65 && k <= 90) || (k >= 97 && k <= 122)) {
+            if(input.size()<16)
+                input.add((char)k); 
+        } 
+        else if(k == KeyEvent.VK_BACK_SPACE) {
+            if(input.size()>0)
+                input.remove(input.size()-1);
+        }
+        else if(k == KeyEvent.VK_ENTER) {
             enter=true;
             checkClick();
-        }        
+        } 
+        
     }
 
     @Override
@@ -177,37 +171,15 @@ public class EndGameState extends GameState{
     private void checkClick(){
         if(nextbox.contains(click) || enter){
             Main.audio.stop();
-            if(dead) {
-                Player.score = 0;
-                Player.isDead=false;
-                gsm.states.add(new EndGameState(gsm,0,Player.isDead));
-            }
-            else{
-               
             
-                switch(text){
-                    case 0:
-                        gsm.states.add(new LevelState(gsm, 1, 6));
-                        break;
-                    case 1:
-                        gsm.states.add(new LevelState(gsm, 2, 4));
-                        break;
-                    case 2:
-                        gsm.states.add(new LevelState(gsm, 3, 4));
-                        break;
-                    case 3:
-                       gsm.states.add(new LevelState(gsm, 4, 4));
-                        break;
-                    case 4:
-                       gsm.states.add(new LevelState(gsm, 5, 4));
-                        break;
-                    default:
-                        gsm.states.add(new MenuState(gsm));
-                }
+            try {
+                GamePanel.score.writeScore(name, Player.score);
+            } catch (IOException ex) {
+                Logger.getLogger(SaveScoreState.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+            gsm.states.add(new MenuState(gsm));
         }
-        else if(dead && backbox.contains(click)){
+        else if(backbox.contains(click)){
             gsm.states.add(new MenuState(gsm));
         }
     }
