@@ -129,7 +129,7 @@ public class EndGameState extends GameState{
             g.setColor(new Color(50,120,54));
             g.fillRect(GamePanel.WIDTH/4*2, GamePanel.HEIGHT/5*4, GamePanel.WIDTH/4,GamePanel.HEIGHT/6);
             g.setColor(Color.WHITE);
-            drawCenteredString(g, "Restart", nextbox, f2);
+            drawCenteredString(g, "Zapisz wynik", nextbox, f2);
         }
         else{
             nextbox = new Rectangle(GamePanel.WIDTH/8*3, GamePanel.HEIGHT/5*4, GamePanel.WIDTH/4,GamePanel.HEIGHT/6);
@@ -180,7 +180,8 @@ public class EndGameState extends GameState{
             if(dead) {
                 Player.score = 0;
                 Player.isDead=false;
-                gsm.states.add(new EndGameState(gsm,0,Player.isDead));
+                //gsm.states.add(new EndGameState(gsm,0,Player.isDead));
+                gsm.states.add(new SaveScoreState(gsm));
             }
             else{
                
@@ -202,7 +203,7 @@ public class EndGameState extends GameState{
                        gsm.states.add(new LevelState(gsm, 5, 4));
                         break;
                     default:
-                        gsm.states.add(new MenuState(gsm));
+                       gsm.states.add(new MenuState(gsm));
                 }
             }
             

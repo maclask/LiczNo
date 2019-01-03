@@ -30,7 +30,7 @@ import liczno.enterties.Player;
  */
 public class MenuState extends GameState{
 
-    private final String[] options = {"ROZPOCZNIJ GRĘ", "POMOC", "WYJDŹ"};
+    private final String[] options = {"ROZPOCZNIJ GRĘ", "NAJLEPSZE WYNIKI", "POMOC", "WYJDŹ"};
     private int currentSel = 0;
     private Button topbox;
     private Point click, hover;
@@ -113,13 +113,18 @@ public class MenuState extends GameState{
                    Main.audio.playLevelMp3a();
                    gsm.states.push(new EndGameState(gsm,0,Player.isDead));
                    break;
-           //help
+                   //help
                case 1:
                     Main.audio.playLevelMp3a();
-                   gsm.states.push(new SaveScoreState(gsm));
+                   gsm.states.push(new ShowScoreState(gsm));
+                   break;  
+           //help
+               case 2:
+                    Main.audio.playLevelMp3a();
+                   //gsm.states.push(new ShowScoreState(gsm));
                    break;               
            //exit
-               case 2:
+               case 3:
                    System.exit(0);
                    break;
                default:

@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -32,21 +33,21 @@ import liczno.enterties.Block;
  */
 public class SaveScore {
     
-    private int records;
     private String path;
-    Map<String,Integer> scores;
+    private boolean sorted;
+
     
-    ArrayList<Block> blocksList = new ArrayList<>();
+    ArrayList<Score> scores;
     
     public SaveScore() {
         
         path = System.getProperty("user.dir")+"\\licznoscores";
         System.out.println(path);
-        scores = new HashMap<>();
-        records =0;
+        scores = new ArrayList<>();
+        sorted = false;
     }
     
-    public Map readScore() {
+    public ArrayList readScore() {
         FileInputStream in = null;
         try {
             in = new FileInputStream(path);
@@ -57,9 +58,8 @@ public class SaveScore {
                 
             try {
                 while( (line = br.readLine())!=null){
-                    records++;
                     String[] score = line.split("\\s+");
-                    scores.put(score[0], Integer.parseInt(score[1]));
+                    scores.add(new Score(score[0], Integer.parseInt(score[1])));
                     
                 }
             } catch (IOException ex) {
@@ -67,25 +67,24 @@ public class SaveScore {
             }
             return scores;
 
-        } catch (FileNotFoundException ex) {
+        }
+        catch (FileNotFoundException ex) {
             Logger.getLogger(SaveScore.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
+        } 
+        
+        finally {
             try {
                 in.close();
             } catch (IOException ex) {
                 Logger.getLogger(SaveScore.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        
         return null;
     }
     
     public void writeScore(String name, int score) throws IOException{
-        //scores = readScore();
-        String space = " ";
-        String newline = "\n";
-        byte [] bspace = space.getBytes();
-        byte [] nl = newline.getBytes();
-        byte [] nameInBytes = name.getBytes();
+        if("".equals(name))name="anonim";
         File out = new File(path);
         String write = null;
         if(out.exists() && !out.isDirectory()) { 
@@ -98,7 +97,13 @@ public class SaveScore {
             write=  name + " " + score;
         }
         Files.write(Paths.get(path), write.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-        records++;
-         }
+    }
+    
+    public ArrayList sort(ArrayList list){
+        if(!sorted)
+        Collections.sort(list);
+        sorted = true;
+        return list;
+    }
     
 }

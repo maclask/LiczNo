@@ -63,6 +63,7 @@ public class SaveScoreState extends GameState{
     private boolean enter=false;
     private String print = "Podaj imię";
     private static  String name = "";
+        private ArrayList<Score> scores;
             
     SaveScoreState(GameStateManager gsm){
         super(gsm);
@@ -76,7 +77,8 @@ public class SaveScoreState extends GameState{
         score = "Twój wynik: " + Player.score;
         boxes = new ArrayList();
         input = new ArrayList();
-              
+              scores = GamePanel.score.readScore();
+                GamePanel.score.sort(scores);
     }
 
     @Override

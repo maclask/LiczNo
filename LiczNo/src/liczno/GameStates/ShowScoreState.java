@@ -57,9 +57,9 @@ public class ShowScoreState extends GameState{
     private ArrayList<Rectangle> boxes;
     private String score;
     Point click, hover;
-    private Map scores;
+    private ArrayList<Score> scores;
     
-    private int text;
+    private int records;
     private boolean enter=false;
     private String print;
             
@@ -76,6 +76,10 @@ public class ShowScoreState extends GameState{
         boxes = new ArrayList();
         print = "Najlepsze wyniki";
         scores = GamePanel.score.readScore();
+        scores = GamePanel.score.sort(scores);
+        System.out.println(scores.size());
+        if(scores.size()<5)records=scores.size();
+        else records = 5;
     }
     
     
@@ -100,14 +104,15 @@ public class ShowScoreState extends GameState{
         
 
         //g.drawString(print, GamePanel.WIDTH/4, GamePanel.HEIGHT/5*3);
-        topbox = new Rectangle(GamePanel.WIDTH/4, GamePanel.HEIGHT/5, GamePanel.WIDTH/2,GamePanel.HEIGHT/4);
+        topbox = new Rectangle(GamePanel.WIDTH/4, GamePanel.HEIGHT/9, GamePanel.WIDTH/2,GamePanel.HEIGHT/4);
        drawCenteredString(g,  print, topbox, f2);
         
         f2 = f2.deriveFont(60F);
         g.setFont(f2);
-        if(text!=0){
-            scorebox = new Rectangle(GamePanel.WIDTH/4, GamePanel.HEIGHT/5*2, GamePanel.WIDTH/2,GamePanel.HEIGHT/4);
-            drawCenteredString(g, score, scorebox, f2);
+        
+        for(int i = 0; i<records; i++){
+            scorebox = new Rectangle(GamePanel.WIDTH/4, GamePanel.HEIGHT/8*2+60*i, GamePanel.WIDTH/2,GamePanel.HEIGHT/4);
+            drawCenteredString(g, scores.get(i).toString(), scorebox, f2);
         }
        
         
