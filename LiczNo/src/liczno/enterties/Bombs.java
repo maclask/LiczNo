@@ -27,6 +27,7 @@ import java.awt.Graphics;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
+import liczno.GamePanel;
 import liczno.Images;
 
 /**
@@ -71,9 +72,10 @@ public class Bombs {
             else {
                 selectedBlock.add(newValue);
 
-                    tempx = generator.nextInt((int)blocksList.get(selectedBlock.get(i)).getWidth()-Bomb.bombWidth)
+                    do{
+                        tempx = generator.nextInt((int)blocksList.get(selectedBlock.get(i)).getWidth()-Bomb.bombWidth)
                             +(int)blocksList.get(selectedBlock.get(i)).getX();
-
+                    }while(tempx>GamePanel.WIDTH-Images.bomb.getWidth());
 
                 selectedX.add(tempx);
                 

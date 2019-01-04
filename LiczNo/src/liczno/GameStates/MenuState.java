@@ -65,14 +65,8 @@ public class MenuState extends GameState{
 
     @Override
     public void draw(Graphics g) {
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.setRenderingHint(
-        RenderingHints.KEY_TEXT_ANTIALIASING,
-        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-
-
-       g2d.drawImage(Images.bg, 0, 0, Images.bgWidth, Images.bgHeight, null);
-       g2d.drawImage(Images.logo, GamePanel.WIDTH / 9, GamePanel.HEIGHT/5*2, 300, 300, null);
+       g.drawImage(Images.bg, 0, 0, Images.bgWidth, Images.bgHeight, null);
+       g.drawImage(Images.logo, GamePanel.WIDTH / 9, GamePanel.HEIGHT/5*2, 300, 300, null);
        
        topbox.drawButton(g);
        
@@ -165,7 +159,7 @@ public class MenuState extends GameState{
                    break;               
            //exit
                 case 4:
-                   
+                   gsm.states.push(new AboutState(gsm));
                    break;
                case 5:
                    System.exit(0);

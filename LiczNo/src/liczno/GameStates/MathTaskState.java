@@ -107,13 +107,10 @@ public class MathTaskState extends GameState {
         g.setColor(Color.WHITE);
         g.fillRect(GamePanel.WIDTH / 2 - width / 2, GamePanel.HEIGHT / 2 - height / 2, width, height);
 
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.setRenderingHint(
-                RenderingHints.KEY_TEXT_ANTIALIASING,
-                RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+       
         Font f2 = Images.f.deriveFont(100F);
         g.setFont(f2);
-        g2d.setColor(Color.BLACK);
+        g.setColor(Color.BLACK);
 
         inputbox = new Rectangle(370, 414, 284, 86);
         g.setColor(new Color(191, 191, 191));

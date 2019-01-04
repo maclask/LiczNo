@@ -10,7 +10,9 @@ import liczno.GameStates.GameStateManager;
 import javax.swing.JPanel;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.LayoutManager;
+import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -42,6 +44,8 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
     public Images images;
     public static ScoreManager score;
     public static Color red, green;
+    
+    public static boolean antialiasing = true;
 
     public GamePanel() {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -101,6 +105,12 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.clearRect(0, 0, WIDTH, HEIGHT);
+        if(antialiasing){
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setRenderingHint(
+            RenderingHints.KEY_TEXT_ANTIALIASING,
+            RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        }
         gsm.draw(g);
     }
 

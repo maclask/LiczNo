@@ -87,10 +87,7 @@ public class SaveScoreState extends GameState {
 
     @Override
     public void draw(Graphics g) {
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.setRenderingHint(
-                RenderingHints.KEY_TEXT_ANTIALIASING,
-                RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
 
         g.drawImage(Images.bg, 0, 0, null);
         Font f2 = Images.f.deriveFont(100F);

@@ -66,12 +66,17 @@ public class Audio {
     }
 
     public void play(int track, boolean loop) throws LineUnavailableException, IOException, UnsupportedAudioFileException {
+        System.out.println("if sfx");
         if (sfxOn) {
+            System.out.println("if open");
             if (clip.isOpen()) {
+                System.out.println("syop");
                 clip.stop();
+                System.out.println("close");
                 clip.close();
-            }
+            }System.out.println("if aval");
             if (ais[track].available() == 0) {
+                System.out.println("reset");
                 ais[track].reset();
             }
             System.out.println("reset");
@@ -95,7 +100,6 @@ public class Audio {
 
     public void playLevelMp3(int level) {
         if (musicOn) {
-System.out.println("dupa");
             final int parameter = level;
 
             mp3 = new Thread(new Runnable() {

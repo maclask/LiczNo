@@ -58,7 +58,7 @@ public class SettingsState extends GameState {
     private Button topButton, doneButton;
     private Button[][] settingsList;
 
-    private final String[] settingsName = {"Efekty dźwiękowe", "Muzyka", "Wyczyść listę wyników"};
+    private final String[] settingsName = {"Efekty dźwiękowe", "Muzyka", "Wyczyść listę wyników", "Wygładzanie czcionek"};
     private final String[] switchState = {"Włączone", "Wyłączone","Wyczyszczono","Wyczyść"};
     private final static int settingsAmount = 2;
 
@@ -79,16 +79,20 @@ public class SettingsState extends GameState {
 
         settingsList = new Button[settingsName.length][settingsAmount];
         for (int i = 0; i < settingsList.length; i++) {
-            settingsList[i][0] = new Button(GamePanel.WIDTH / 5  , GamePanel.HEIGHT / 7 * 3+ 80 * i, GamePanel.WIDTH / 4, GamePanel.HEIGHT / 10, 40, settingsName[i], false);
-            settingsList[i][1] = new Button(GamePanel.WIDTH / 5 * 3, GamePanel.HEIGHT / 7 *3 + 80 * i, GamePanel.WIDTH / 4, GamePanel.HEIGHT / 10, GamePanel.green, Color.WHITE, 40, switchState[0]);
+            settingsList[i][0] = new Button(GamePanel.WIDTH / 5  , GamePanel.HEIGHT / 9 * 3+ 80 * i, GamePanel.WIDTH / 4, GamePanel.HEIGHT / 10, 40, settingsName[i], false);
+            settingsList[i][1] = new Button(GamePanel.WIDTH / 5 * 3, GamePanel.HEIGHT / 9 *3 + 80 * i, GamePanel.WIDTH / 4, GamePanel.HEIGHT / 10, GamePanel.green, Color.WHITE, 40, switchState[0]);
         }
         if(!Main.audio.sfxOn){
             settingsList[0][1].bgColor = GamePanel.red;
             settingsList[0][1].text = switchState[1];
         }
         if(!Main.audio.musicOn){
-            settingsList[0][1].bgColor = GamePanel.red;
-            settingsList[0][1].text = switchState[1];
+            settingsList[1][1].bgColor = GamePanel.red;
+            settingsList[1][1].text = switchState[1];
+        }
+        if(!GamePanel.antialiasing){
+            settingsList[3][1].bgColor = GamePanel.red;
+            settingsList[3][1].text = switchState[1];
         }
         settingsList[2][1].text = switchState[3];
         settingsList[2][1].bgColor = GamePanel.red;
@@ -109,10 +113,7 @@ public class SettingsState extends GameState {
 
     @Override
     public void draw(Graphics g) {
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.setRenderingHint(
-                RenderingHints.KEY_TEXT_ANTIALIASING,
-                RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
 
         g.drawImage(Images.bg, 0, 0, null);
         Font f2 = Images.f.deriveFont(100F);
@@ -194,6 +195,19 @@ public class SettingsState extends GameState {
                 Main.audio.playLevelMp3(5);
                 settingsList[1][1].bgColor = GamePanel.green;
                 settingsList[1][1].text = switchState[0];
+            }
+        } 
+        if (settingsList[3][1].contains(click)) {
+            
+            if(GamePanel.antialiasing){
+                GamePanel.antialiasing = !GamePanel.antialiasing;
+                settingsList[3][1].bgColor = GamePanel.red;
+                settingsList[3][1].text = switchState[1];
+            }
+            else{
+                GamePanel.antialiasing = !GamePanel.antialiasing;
+                settingsList[3][1].bgColor = GamePanel.green;
+                settingsList[3][1].text = switchState[0];
             }
         } 
         if (settingsList[2][1].contains(click)) {

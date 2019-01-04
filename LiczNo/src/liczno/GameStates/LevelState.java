@@ -43,10 +43,11 @@ public class LevelState extends GameState {
     int time = 60;
     int level;
     private long lasttime = System.nanoTime();
+    public String mapPath;
     private MathTaskState task;
     int bombamount;
     Rectangle backbox;
-    Point click;
+    Point click, hover;
 
     public LevelState(GameStateManager gsm, int level, int bombamount) {
         super(gsm);
@@ -54,7 +55,8 @@ public class LevelState extends GameState {
         this.level = level;
         //init(); 
         player = new Player();
-        map = new Map("map2");
+        mapPath = "map"+level;
+        map = new Map(mapPath);
         System.out.println(this.bombamount);
         bombs = new Bombs(bombamount, map.getBlocks(), player);
         this.bombamount = bombs.getBombs().size();
@@ -112,17 +114,13 @@ public class LevelState extends GameState {
         bombs.draw(g);
         player.draw(g);
 
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.setRenderingHint(
-                RenderingHints.KEY_TEXT_ANTIALIASING,
-                RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         Font f2 = Images.f.deriveFont(40F);
-        g2d.setFont(f2);
-        g2d.setColor(Color.WHITE);
-        g2d.drawString("CZAS", 50, 50);
-        g2d.drawString(String.valueOf(time), 50, 90);
-        g2d.drawString("PUNKTY", GamePanel.WIDTH - 150, 50);
-        g2d.drawString(String.valueOf(Player.score), GamePanel.WIDTH - 150, 90);
+        g.setFont(f2);
+        g.setColor(Color.WHITE);
+        g.drawString("CZAS", 50, 50);
+        g.drawString(String.valueOf(time), 50, 90);
+        g.drawString("PUNKTY", GamePanel.WIDTH - 150, 50);
+        g.drawString(String.valueOf(Player.score), GamePanel.WIDTH - 150, 90);
 
         backbox = new Rectangle(50, GamePanel.HEIGHT - 65, 100, 50);
         g.setColor(new Color(255, 51, 51));
@@ -149,12 +147,23 @@ public class LevelState extends GameState {
         click = new Point(e.getX(), e.getY());
 
         if (backbox.contains(click)) {
+            Main.audio.playLevelMp3a();
             gsm.states.add(new MenuState(gsm));
         }
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
+        hover = new Point(e.getX(), e.getY());
+        boolean hand = false;
+        if(backbox.contains(hover)) {
+            Main.frame.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                hand = true;
+        }
+        if(!hand)
+        Main.frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        
+   
     }
 
     public void drawCenteredString(Graphics g, String text, Rectangle rect, Font font) {
