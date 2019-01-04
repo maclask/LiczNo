@@ -23,6 +23,7 @@
  */
 package liczno.GameStates;
 
+import liczno.Score;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
@@ -51,34 +52,33 @@ import liczno.enterties.Player;
  *
  * @author Maciek
  */
-public class SaveScoreState extends GameState{
+public class SaveScoreState extends GameState {
 
     private List<Character> input;
     private Rectangle topbox, inputbox, scorebox, backbox, nextbox;
     private ArrayList<Rectangle> boxes;
     private String score;
     Point click, hover;
-    
 
-    private boolean enter=false;
+    private boolean enter = false;
     private String print = "Podaj imię";
-    private static  String name = "";
-        private ArrayList<Score> scores;
-            
-    SaveScoreState(GameStateManager gsm){
+    private static String name = "";
+    private ArrayList<Score> scores;
+
+    SaveScoreState(GameStateManager gsm) {
         super(gsm);
     }
-    
+
     @Override
     public void init() {
         Main.frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-        click = new Point(0,0);
-        hover = new Point(0,0);
+        click = new Point(0, 0);
+        hover = new Point(0, 0);
         score = "Twój wynik: " + Player.score;
         boxes = new ArrayList();
         input = new ArrayList();
-              scores = GamePanel.score.readScore();
-                GamePanel.score.sort(scores);
+//              scores = GamePanel.score.readScore();
+//                GamePanel.score.sort(scores);
     }
 
     @Override
@@ -89,62 +89,57 @@ public class SaveScoreState extends GameState{
     public void draw(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(
-        RenderingHints.KEY_TEXT_ANTIALIASING,
-        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        
+                RenderingHints.KEY_TEXT_ANTIALIASING,
+                RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
         g.drawImage(Images.bg, 0, 0, null);
         Font f2 = Images.f.deriveFont(100F);
         g.setFont(f2);
         g.setColor(Color.WHITE);
 
-        
-
         //g.drawString(print, GamePanel.WIDTH/4, GamePanel.HEIGHT/5*3);
-        topbox = new Rectangle(GamePanel.WIDTH/4, GamePanel.HEIGHT/5, GamePanel.WIDTH/2,GamePanel.HEIGHT/4);
-       drawCenteredString(g,  print, topbox, f2);
-        
+        topbox = new Rectangle(GamePanel.WIDTH / 4, GamePanel.HEIGHT / 5, GamePanel.WIDTH / 2, GamePanel.HEIGHT / 4);
+        drawCenteredString(g, print, topbox, f2);
+
         f2 = f2.deriveFont(60F);
         g.setFont(f2);
-        
-        inputbox = new Rectangle(370,414,384,86);
-        g.setColor(new Color(191,191,191));
-        g.fillRect(370,414,384,86);
 
-        name="";
-        for(int i =0; i<input.size(); i++){
-            name += Character.toString (input.get(i));
+        inputbox = new Rectangle(370, 414, 384, 86);
+        g.setColor(new Color(191, 191, 191));
+        g.fillRect(370, 414, 384, 86);
+
+        name = "";
+        for (int i = 0; i < input.size(); i++) {
+            name += Character.toString(input.get(i));
         }
         g.setColor(Color.BLACK);
         drawCenteredString(g, name, inputbox, f2);
-        
 
-            nextbox = new Rectangle(GamePanel.WIDTH/8*3, GamePanel.HEIGHT/5*4, GamePanel.WIDTH/4,GamePanel.HEIGHT/6);
-            boxes.add(nextbox);
-            g.setColor(new Color(50,120,54));
-            g.fillRect(GamePanel.WIDTH/8*3, GamePanel.HEIGHT/5*4, GamePanel.WIDTH/4,GamePanel.HEIGHT/6);
-            g.setColor(Color.WHITE);
-            drawCenteredString(g, "Zapisz", nextbox, f2);
-        
-            
+        nextbox = new Rectangle(GamePanel.WIDTH / 8 * 3, GamePanel.HEIGHT / 5 * 4, GamePanel.WIDTH / 4, GamePanel.HEIGHT / 6);
+        boxes.add(nextbox);
+        g.setColor(new Color(50, 120, 54));
+        g.fillRect(GamePanel.WIDTH / 8 * 3, GamePanel.HEIGHT / 5 * 4, GamePanel.WIDTH / 4, GamePanel.HEIGHT / 6);
+        g.setColor(Color.WHITE);
+        drawCenteredString(g, "Zapisz", nextbox, f2);
 
     }
 
     @Override
     public void keyPressed(int k) {
-        
-        if((k >= 65 && k <= 90) || (k >= 97 && k <= 122)) {
-            if(input.size()<16)
-                input.add((char)k); 
-        } 
-        else if(k == KeyEvent.VK_BACK_SPACE) {
-            if(input.size()>0)
-                input.remove(input.size()-1);
-        }
-        else if(k == KeyEvent.VK_ENTER) {
-            enter=true;
+
+        if ((k >= 65 && k <= 90) || (k >= 97 && k <= 122)) {
+            if (input.size() < 16) {
+                input.add((char) k);
+            }
+        } else if (k == KeyEvent.VK_BACK_SPACE) {
+            if (input.size() > 0) {
+                input.remove(input.size() - 1);
+            }
+        } else if (k == KeyEvent.VK_ENTER) {
+            enter = true;
             checkClick();
-        } 
-        
+        }
+
     }
 
     @Override
@@ -161,31 +156,30 @@ public class SaveScoreState extends GameState{
     public void mouseMoved(MouseEvent e) {
         hover = new Point(e.getX(), e.getY());
         for (Rectangle box : boxes) {
-            if(box.contains(hover) ){
+            if (box.contains(hover)) {
                 Main.frame.setCursor(new Cursor(Cursor.HAND_CURSOR));
                 break;
-            }
-            else
+            } else {
                 Main.frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            }
         }
     }
-    
-    private void checkClick(){
-        if(nextbox.contains(click) || enter){
+
+    private void checkClick() {
+        if (nextbox.contains(click) || enter) {
             Main.audio.stop();
-            
+
             try {
                 GamePanel.score.writeScore(name, Player.score);
             } catch (IOException ex) {
                 Logger.getLogger(SaveScoreState.class.getName()).log(Level.SEVERE, null, ex);
             }
             gsm.states.add(new MenuState(gsm));
-        }
-        else if(backbox.contains(click)){
+        } else if (backbox.contains(click)) {
             gsm.states.add(new MenuState(gsm));
         }
     }
-    
+
     public void drawCenteredString(Graphics g, String text, Rectangle rect, Font font) {
         FontMetrics metrics = g.getFontMetrics(font);
         int x = rect.x + (rect.width - metrics.stringWidth(text)) / 2;
@@ -194,5 +188,4 @@ public class SaveScoreState extends GameState{
         g.drawString(text, x, y);
     }
 
-    
 }

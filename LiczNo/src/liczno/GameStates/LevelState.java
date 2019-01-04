@@ -31,111 +31,102 @@ import liczno.enterties.Bombs;
 import liczno.enterties.Player;
 import liczno.mapping.Map;
 
-
 /**
  *
  * @author Maciek
  */
-public class LevelState extends GameState{
+public class LevelState extends GameState {
+
     Player player;
     Map map;
     Bombs bombs;
     int time = 60;
     int level;
-    private long lasttime=System.nanoTime();
+    private long lasttime = System.nanoTime();
     private MathTaskState task;
     int bombamount;
     Rectangle backbox;
     Point click;
-    
-    public LevelState(GameStateManager gsm, int level, int bombamount){
+
+    public LevelState(GameStateManager gsm, int level, int bombamount) {
         super(gsm);
         this.bombamount = bombamount;
         this.level = level;
         //init(); 
         player = new Player();
-        map = new Map("map2");System.out.println(this.bombamount);
-        bombs = new Bombs(bombamount,map.getBlocks(),player);
+        map = new Map("map2");
+        System.out.println(this.bombamount);
+        bombs = new Bombs(bombamount, map.getBlocks(), player);
         this.bombamount = bombs.getBombs().size();
         Main.audio.playLevelMp3(level);
         Main.frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 
     }
 
-    
-    
     @Override
     public void init() {
-        
-   
+
     }
 
     @Override
     public void tick() {
         player.tick(map.getBlocks(), bombs.getBombs());
-        
-        if(Player.bombTouched)
-        {
-           while(task == null){                
-           task=new MathTaskState(gsm);
-           
-           gsm.states.push(task);
-           }
-           
-        }
-        if(Player.solved) {
-            task=null;
-            bombamount--;
-            Player.solved=false;
+
+        if (Player.bombTouched) {
+            while (task == null) {
+                task = new MathTaskState(gsm);
+
+                gsm.states.push(task);
+            }
 
         }
-        if(System.nanoTime()-lasttime>=1000000000)
-        {
-            time--;
-            lasttime=System.nanoTime();
+        if (Player.solved) {
+            task = null;
+            bombamount--;
+            Player.solved = false;
+
         }
-        if(time<0){
-            Player.isDead=true;
+        if (System.nanoTime() - lasttime >= 1000000000) {
+            time--;
+            lasttime = System.nanoTime();
+        }
+        if (time < 0) {
+            Player.isDead = true;
             gsm.states.add(new EndGameState(gsm, 0, Player.isDead));
         }
-        if(bombamount == 0){
+        if (bombamount == 0) {
             Player.score += time;
             bombamount--; //to stop adding time
             Main.audio.playLevelMp3a();
-            
+
             gsm.states.add(new EndGameState(gsm, level, Player.isDead));
         }
     }
 
     @Override
     public void draw(Graphics g) {
-      
+
         g.drawImage(Images.bg, 0, 0, GamePanel.WIDTH, GamePanel.HEIGHT, null);
 
-       map.draw(g);
-       bombs.draw(g);
-       player.draw(g);
-       
-       
-        
-        
-       
-       Graphics2D g2d = (Graphics2D) g;
+        map.draw(g);
+        bombs.draw(g);
+        player.draw(g);
+
+        Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(
-        RenderingHints.KEY_TEXT_ANTIALIASING,
-        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+                RenderingHints.KEY_TEXT_ANTIALIASING,
+                RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         Font f2 = Images.f.deriveFont(40F);
         g2d.setFont(f2);
         g2d.setColor(Color.WHITE);
         g2d.drawString("CZAS", 50, 50);
-       g2d.drawString(String.valueOf(time), 50, 90);
-       g2d.drawString("PUNKTY", GamePanel.WIDTH-150, 50);
-       g2d.drawString(String.valueOf(Player.score), GamePanel.WIDTH-150, 90);
-       
-       
-       backbox = new Rectangle(50, GamePanel.HEIGHT-65, 100,50);
-       g.setColor(new Color(255, 51, 51));
-        g.fillRect(50, GamePanel.HEIGHT-65, 100,50);
+        g2d.drawString(String.valueOf(time), 50, 90);
+        g2d.drawString("PUNKTY", GamePanel.WIDTH - 150, 50);
+        g2d.drawString(String.valueOf(Player.score), GamePanel.WIDTH - 150, 90);
+
+        backbox = new Rectangle(50, GamePanel.HEIGHT - 65, 100, 50);
+        g.setColor(new Color(255, 51, 51));
+        g.fillRect(50, GamePanel.HEIGHT - 65, 100, 50);
         g.setColor(Color.WHITE);
         drawCenteredString(g, "Menu", backbox, f2);
     }
@@ -143,7 +134,9 @@ public class LevelState extends GameState{
     @Override
     public void keyPressed(int k) {
         player.keyPressed(k);
-        if(k==KeyEvent.VK_T)bombs = new Bombs(bombamount,map.getBlocks(),player);
+        if (k == KeyEvent.VK_T) {
+            bombs = new Bombs(bombamount, map.getBlocks(), player);
+        }
     }
 
     @Override
@@ -154,15 +147,16 @@ public class LevelState extends GameState{
     @Override
     public void mouseClicked(MouseEvent e) {
         click = new Point(e.getX(), e.getY());
-    
-        if(backbox.contains(click))
-                gsm.states.add(new MenuState(gsm));      
+
+        if (backbox.contains(click)) {
+            gsm.states.add(new MenuState(gsm));
+        }
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
     }
-    
+
     public void drawCenteredString(Graphics g, String text, Rectangle rect, Font font) {
         FontMetrics metrics = g.getFontMetrics(font);
         int x = rect.x + (rect.width - metrics.stringWidth(text)) / 2;

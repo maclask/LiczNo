@@ -30,7 +30,7 @@ import liczno.enterties.Player;
  */
 public class MenuState extends GameState{
 
-    private final String[] options = {"ROZPOCZNIJ GRĘ", "NAJLEPSZE WYNIKI", "POMOC", "WYJDŹ"};
+    private final String[] options = {"ROZPOCZNIJ GRĘ", "NAJLEPSZE WYNIKI","Ustawienia", "POMOC", "o grze","WYJDŹ"};
     private int currentSel = 0;
     private Button topbox;
     private Point click, hover;
@@ -41,13 +41,13 @@ public class MenuState extends GameState{
         super(gsm);
         buttons = new Button[options.length];
         for(int i=0; i<options.length; i++){
-        buttons[i] = new Button(GamePanel.WIDTH/2, GamePanel.HEIGHT/2+80*i, 
+        buttons[i] = new Button(GamePanel.WIDTH/2, GamePanel.HEIGHT/9*3+80*i, 
                 GamePanel.WIDTH/3,GamePanel.HEIGHT/12, new Color(0,0,0,0),Color.WHITE,
-                50, options[i]);
+                50, options[i], true);
        }
         
-        topbox = new Button(GamePanel.WIDTH/4, GamePanel.HEIGHT/7, 
-                GamePanel.WIDTH/2,GamePanel.HEIGHT/4, 150, "MENU");
+        topbox = new Button(GamePanel.WIDTH/4, GamePanel.HEIGHT/10, 
+                GamePanel.WIDTH/2,GamePanel.HEIGHT/6, 150, "MENU");
 
         
     }
@@ -72,7 +72,7 @@ public class MenuState extends GameState{
 
 
        g2d.drawImage(Images.bg, 0, 0, Images.bgWidth, Images.bgHeight, null);
-       g2d.drawImage(Images.logo, GamePanel.WIDTH / 2 - 400, 350, 300, 300, null);
+       g2d.drawImage(Images.logo, GamePanel.WIDTH / 9, GamePanel.HEIGHT/5*2, 300, 300, null);
        
        topbox.drawButton(g);
        
@@ -80,10 +80,10 @@ public class MenuState extends GameState{
        for(int i=0; i<options.length; i++){
            if(i==currentSel){
                buttons[i].txtColor = Color.WHITE;
-               buttons[i].bgColor = new Color(255,213,109);
+               buttons[i].bgColor = new Color(243,192,38);
            }
            else{
-               buttons[i].txtColor = new Color(255,213,109);
+               buttons[i].txtColor = new Color(243,192,38);
                buttons[i].bgColor = new Color(0,0,0,0);
            }
            buttons[i].drawButton(g);
@@ -106,30 +106,8 @@ public class MenuState extends GameState{
        }
        
        if(k == KeyEvent.VK_ENTER){
+           checkClick(currentSel);
            
-           switch (currentSel) {
-           //start
-               case 0:
-                   Main.audio.playLevelMp3a();
-                   gsm.states.push(new EndGameState(gsm,0,Player.isDead));
-                   break;
-                   //help
-               case 1:
-                    Main.audio.playLevelMp3a();
-                   gsm.states.push(new ShowScoreState(gsm));
-                   break;  
-           //help
-               case 2:
-                    Main.audio.playLevelMp3a();
-                   //gsm.states.push(new ShowScoreState(gsm));
-                   break;               
-           //exit
-               case 3:
-                   System.exit(0);
-                   break;
-               default:
-                   break;
-           }
            
        }
     }
@@ -142,31 +120,58 @@ public class MenuState extends GameState{
     @Override
     public void mouseClicked(MouseEvent e) {
         click = new Point(e.getX(), e.getY());
-        checkClick();
+        checkClick(currentSel);
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
         hover = new Point(e.getX(), e.getY());
+        boolean hand = false;
         for(int i=0; i<options.length; i++)
         if(buttons[i].contains(hover)) {
             currentSel=i;
-            Main.frame.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            Main.frame.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                hand = true;
+                break;
         }
-         // else 
-            //Main.frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        if(!hand)
+        Main.frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        
         
     }
 
-    private void checkClick(){
-        if(buttons[0].contains(click)){
-            gsm.states.push(new EndGameState(gsm,0,Player.isDead));
-        }
-        else if(buttons[1].contains(click)){
-            
-        }
-        else if(buttons[2].contains(click)){
-            System.exit(0);
-        }
+    private void checkClick(int currentSel){
+     
+        switch (currentSel) {
+           //start
+               case 0:
+                   Main.audio.playLevelMp3a();
+                   gsm.states.push(new EndGameState(gsm,0,Player.isDead));
+                   break;
+                   //help
+               case 1:
+                   // Main.audio.playLevelMp3a();
+                   gsm.states.push(new ShowScoreState(gsm));
+                   break;  
+           //help
+               case 2:
+                   // Main.audio.playLevelMp3a();
+                   gsm.states.push(new SettingsState(gsm));
+                   break; 
+               
+               case 3:
+                   // Main.audio.playLevelMp3a();
+                   //gsm.states.push(new ShowScoreState(gsm));
+                   break;               
+           //exit
+                case 4:
+                   
+                   break;
+               case 5:
+                   System.exit(0);
+                   break;
+               default:
+                   break;
+           }
     }
 }

@@ -5,7 +5,7 @@
  */
 package liczno;
 
-
+import java.awt.Color;
 import liczno.GameStates.GameStateManager;
 import javax.swing.JPanel;
 import java.awt.Dimension;
@@ -21,88 +21,88 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.OverlayLayout;
-import liczno.GameStates.SaveScore;
 
 /**
  *
  * @author Maciek
  */
-public class GamePanel extends JPanel implements Runnable, MouseListener, MouseMotionListener, KeyListener{
-   
+public class GamePanel extends JPanel implements Runnable, MouseListener, MouseMotionListener, KeyListener {
+
     public static final int WIDTH = 1024;
     public static final int HEIGHT = 768;
-   
+
     private GameStateManager gsm;
 
-    
     private Thread thread;
     private boolean isRunning = false;
-    
+
     private final int FPS = 60;
     private final long targetTime = 1000 / FPS;
-    
+
     public Images images;
-    public static SaveScore score;
-            
-    public GamePanel(){
+    public static ScoreManager score;
+    public static Color red, green;
+
+    public GamePanel() {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         addMouseListener(this);
         addMouseMotionListener(this);
         addKeyListener(this);
         setFocusable(true);
         images = new Images();
-        score = new SaveScore();
+        score = new ScoreManager();
+        green = new Color(50, 120, 54);
+        red = new Color(255, 51, 51);
         start();
         //Map a = score.readScore();
-        
+
     }
-    
-    public void start(){
+
+    public void start() {
         isRunning = true;
         thread = new Thread(this);
         thread.start();
-        
-        
+
         LayoutManager overlay = new OverlayLayout(this);
         this.setLayout(overlay);
     }
-    
+
     @Override
-    public void run(){
+    public void run() {
         long start, elapsed, wait;
         gsm = new GameStateManager();
-        
-        while(isRunning){
+
+        while (isRunning) {
             start = System.nanoTime();
-            
+
             tick();
             repaint();
-            
+
             elapsed = System.nanoTime() - start;
-            wait = targetTime - elapsed /1000;
-            
-            if(wait <= 0 )
+            wait = targetTime - elapsed / 1000;
+
+            if (wait <= 0) {
                 wait = 5;
-            
-            try{
-            Thread.sleep(wait);}
-            catch(Exception e){
+            }
+
+            try {
+                Thread.sleep(wait);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public void tick(){
-       gsm.tick();
-    }
-    
-    @Override
-    public void paintComponent(Graphics g){
-       super.paintComponent(g);
-       g.clearRect(0,0,WIDTH,HEIGHT);
-       gsm.draw(g);
+    public void tick() {
+        gsm.tick();
     }
 
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        g.clearRect(0, 0, WIDTH, HEIGHT);
+        gsm.draw(g);
+    }
 
     @Override
     public void keyPressed(KeyEvent e) {
@@ -114,9 +114,10 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
         gsm.keyReleased(e.getKeyCode());
 
     }
-        
+
     @Override
-    public void keyTyped(KeyEvent e) {}
+    public void keyTyped(KeyEvent e) {
+    }
 
     @Override
     public void mouseClicked(MouseEvent me) {
@@ -147,5 +148,5 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
     public void mouseMoved(MouseEvent me) {
         gsm.mouseMoved(me);
     }
-    
-} 
+
+}

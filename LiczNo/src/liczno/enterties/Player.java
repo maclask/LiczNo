@@ -150,7 +150,7 @@ public class Player{
            }
            if(left) g.drawImage(Images.playerwalking[iw], (int)x+width, (int)y, -width, height, null);
            else g.drawImage(Images.playerwalking[iw], (int)x, (int)y, width, height, null);
-           if(iw==Images.pw-1) iw=0;
+           if(iw==Images.PW-1) iw=0;
         }
         
             
@@ -161,7 +161,7 @@ public class Player{
            }
            if(leftfaced) g.drawImage(Images.playerjumping[ij], (int)x+width, (int)y, -width, height, null);
            else g.drawImage(Images.playerjumping[ij], (int)x, (int)y, width, height, null);
-           if(ij==Images.pj-1) ij=0;
+           if(ij==Images.PJ-1) ij=0;
         }
         else if(isDead){
             if(System.nanoTime()-lasttime>=1000000000/60) {
@@ -170,7 +170,7 @@ public class Player{
            }
            if(leftfaced) g.drawImage(Images.playerdie[id], (int)x+width, (int)y, -width, height, null);
            else g.drawImage(Images.playerdie[id], (int)x, (int)y, width, height, null);
-           if(id==Images.pd-1) id=Images.pd-2;//gsm.states.add(new EndGameState(gsm));
+           if(id==Images.PD-1) id=Images.PD-2;//gsm.states.add(new EndGameState(gsm));
         }
         else{
             if(System.nanoTime()-lasttime>=1000000000/30) {
@@ -179,7 +179,7 @@ public class Player{
            }
            if(leftfaced) g.drawImage(Images.playeridle[ii], (int)x+width, (int)y, -width, height, null);
            else g.drawImage(Images.playeridle[ii], (int)x, (int)y, width, height, null);
-           if(ii==Images.pi-1) ii=0;
+           if(ii==Images.PI-1) ii=0;
         }
 //        Graphics2D g2d = (Graphics2D) g;
 //        g2d.draw(getBounds());

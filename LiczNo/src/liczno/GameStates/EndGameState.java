@@ -50,39 +50,39 @@ import liczno.enterties.Player;
  *
  * @author Maciek
  */
-public class EndGameState extends GameState{
+public class EndGameState extends GameState {
 
     private Rectangle topbox, scorebox, backbox, nextbox;
     private ArrayList<Rectangle> boxes;
     private String score;
     Point click, hover;
-    
-    private final String [] level = {"Poziom 1","Poziom 2","Poziom 3","Poziom 4","Poziom 5","Ukończyłeś grę"};
-    private final String [] textes ={"Nie żyjesz"};
+
+    private final String[] level = {"Poziom 1", "Poziom 2", "Poziom 3", "Poziom 4", "Poziom 5", "Ukończyłeś grę"};
+    private final String[] textes = {"Nie żyjesz"};
     private int text;
-    private boolean dead,enter=false;
+    private boolean dead, enter = false;
     private String print;
-            
-    EndGameState(GameStateManager gsm, int text, boolean dead){
+
+    EndGameState(GameStateManager gsm, int text, boolean dead) {
         super(gsm);
         this.text = text;
         this.dead = dead;
     }
-    
+
     @Override
     public void init() {
         Main.frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-        click = new Point(0,0);
-        hover = new Point(0,0);
+        click = new Point(0, 0);
+        hover = new Point(0, 0);
         score = "Twój wynik: " + Player.score;
         boxes = new ArrayList();
-       
+
         try {
-                Main.audio.play(3,false);
-            } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
-                Logger.getLogger(LevelState.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        
+            Main.audio.play(3, false);
+        } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
+            Logger.getLogger(LevelState.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
     @Override
@@ -93,62 +93,61 @@ public class EndGameState extends GameState{
     public void draw(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(
-        RenderingHints.KEY_TEXT_ANTIALIASING,
-        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        
+                RenderingHints.KEY_TEXT_ANTIALIASING,
+                RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
         g.drawImage(Images.bg, 0, 0, null);
         Font f2 = Images.f.deriveFont(100F);
         g.setFont(f2);
         g.setColor(Color.WHITE);
-        
-        if(dead) print = textes[text];
-        else print = level[text];
-        
+
+        if (dead) {
+            print = textes[text];
+        } else {
+            print = level[text];
+        }
 
         //g.drawString(print, GamePanel.WIDTH/4, GamePanel.HEIGHT/5*3);
-        topbox = new Rectangle(GamePanel.WIDTH/4, GamePanel.HEIGHT/5, GamePanel.WIDTH/2,GamePanel.HEIGHT/4);
-       drawCenteredString(g,  print, topbox, f2);
-        
+        topbox = new Rectangle(GamePanel.WIDTH / 4, GamePanel.HEIGHT / 5, GamePanel.WIDTH / 2, GamePanel.HEIGHT / 4);
+        drawCenteredString(g, print, topbox, f2);
+
         f2 = f2.deriveFont(60F);
         g.setFont(f2);
-        if(text!=0){
-            scorebox = new Rectangle(GamePanel.WIDTH/4, GamePanel.HEIGHT/5*2, GamePanel.WIDTH/2,GamePanel.HEIGHT/4);
+        if (text != 0) {
+            scorebox = new Rectangle(GamePanel.WIDTH / 4, GamePanel.HEIGHT / 5 * 2, GamePanel.WIDTH / 2, GamePanel.HEIGHT / 4);
             drawCenteredString(g, score, scorebox, f2);
         }
-       
-        
-        if(dead){
-            backbox = new Rectangle(GamePanel.WIDTH/4, GamePanel.HEIGHT/5*4, GamePanel.WIDTH/4,GamePanel.HEIGHT/6);
+
+        if (dead) {
+            backbox = new Rectangle(GamePanel.WIDTH / 4, GamePanel.HEIGHT / 5 * 4, GamePanel.WIDTH / 4, GamePanel.HEIGHT / 6);
             boxes.add(backbox);
             g.setColor(new Color(255, 51, 51));
-            g.fillRect(GamePanel.WIDTH/4, GamePanel.HEIGHT/5*4, GamePanel.WIDTH/4,GamePanel.HEIGHT/6);
+            g.fillRect(GamePanel.WIDTH / 4, GamePanel.HEIGHT / 5 * 4, GamePanel.WIDTH / 4, GamePanel.HEIGHT / 6);
             g.setColor(Color.WHITE);
             drawCenteredString(g, "Menu", backbox, f2);
-            nextbox = new Rectangle(GamePanel.WIDTH/4*2, GamePanel.HEIGHT/5*4, GamePanel.WIDTH/4,GamePanel.HEIGHT/6);
+            nextbox = new Rectangle(GamePanel.WIDTH / 4 * 2, GamePanel.HEIGHT / 5 * 4, GamePanel.WIDTH / 4, GamePanel.HEIGHT / 6);
             boxes.add(nextbox);
-            g.setColor(new Color(50,120,54));
-            g.fillRect(GamePanel.WIDTH/4*2, GamePanel.HEIGHT/5*4, GamePanel.WIDTH/4,GamePanel.HEIGHT/6);
+            g.setColor(new Color(50, 120, 54));
+            g.fillRect(GamePanel.WIDTH / 4 * 2, GamePanel.HEIGHT / 5 * 4, GamePanel.WIDTH / 4, GamePanel.HEIGHT / 6);
             g.setColor(Color.WHITE);
             drawCenteredString(g, "Zapisz wynik", nextbox, f2);
-        }
-        else{
-            nextbox = new Rectangle(GamePanel.WIDTH/8*3, GamePanel.HEIGHT/5*4, GamePanel.WIDTH/4,GamePanel.HEIGHT/6);
+        } else {
+            nextbox = new Rectangle(GamePanel.WIDTH / 8 * 3, GamePanel.HEIGHT / 5 * 4, GamePanel.WIDTH / 4, GamePanel.HEIGHT / 6);
             boxes.add(nextbox);
-            g.setColor(new Color(50,120,54));
-            g.fillRect(GamePanel.WIDTH/8*3, GamePanel.HEIGHT/5*4, GamePanel.WIDTH/4,GamePanel.HEIGHT/6);
+            g.setColor(new Color(50, 120, 54));
+            g.fillRect(GamePanel.WIDTH / 8 * 3, GamePanel.HEIGHT / 5 * 4, GamePanel.WIDTH / 4, GamePanel.HEIGHT / 6);
             g.setColor(Color.WHITE);
             drawCenteredString(g, "Dalej", nextbox, f2);
         }
-            
 
     }
 
     @Override
     public void keyPressed(int k) {
-        if(k == KeyEvent.VK_ENTER) {
-            enter=true;
+        if (k == KeyEvent.VK_ENTER) {
+            enter = true;
             checkClick();
-        }        
+        }
     }
 
     @Override
@@ -165,28 +164,27 @@ public class EndGameState extends GameState{
     public void mouseMoved(MouseEvent e) {
         hover = new Point(e.getX(), e.getY());
         for (Rectangle box : boxes) {
-            if(box.contains(hover) ){
+            if (box.contains(hover)) {
                 Main.frame.setCursor(new Cursor(Cursor.HAND_CURSOR));
                 break;
-            }
-            else
+            } else {
                 Main.frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            }
         }
     }
-    
-    private void checkClick(){
-        if(nextbox.contains(click) || enter){
+
+    private void checkClick() {
+        if (nextbox.contains(click) || enter) {
             Main.audio.stop();
-            if(dead) {
-                Player.score = 0;
-                Player.isDead=false;
+            if (dead) {
+                //Player.score = 0;
+                Player.isDead = false;
+                System.out.println("dupa");
                 //gsm.states.add(new EndGameState(gsm,0,Player.isDead));
                 gsm.states.add(new SaveScoreState(gsm));
-            }
-            else{
-               
-            
-                switch(text){
+            } else {
+
+                switch (text) {
                     case 0:
                         gsm.states.add(new LevelState(gsm, 1, 6));
                         break;
@@ -197,22 +195,21 @@ public class EndGameState extends GameState{
                         gsm.states.add(new LevelState(gsm, 3, 4));
                         break;
                     case 3:
-                       gsm.states.add(new LevelState(gsm, 4, 4));
+                        gsm.states.add(new LevelState(gsm, 4, 4));
                         break;
                     case 4:
-                       gsm.states.add(new LevelState(gsm, 5, 4));
+                        gsm.states.add(new LevelState(gsm, 5, 4));
                         break;
                     default:
-                       gsm.states.add(new MenuState(gsm));
+                        gsm.states.add(new MenuState(gsm));
                 }
             }
-            
-        }
-        else if(dead && backbox.contains(click)){
+
+        } else if (dead && backbox.contains(click)) {
             gsm.states.add(new MenuState(gsm));
         }
     }
-    
+
     public void drawCenteredString(Graphics g, String text, Rectangle rect, Font font) {
         FontMetrics metrics = g.getFontMetrics(font);
         int x = rect.x + (rect.width - metrics.stringWidth(text)) / 2;
@@ -221,5 +218,4 @@ public class EndGameState extends GameState{
         g.drawString(text, x, y);
     }
 
-    
 }

@@ -39,7 +39,8 @@ public class Button extends Rectangle{
     private int x, y, width, height;
     public Color bgColor, txtColor;
     private Font font;
-    private String text;
+    public String text;
+    public boolean center = true;
     
     public Button(int x, int y, int width, int height, Color bgColor, Color txtColor, int fontsize, String text){
         this.x = x;
@@ -51,6 +52,34 @@ public class Button extends Rectangle{
         this.font = Images.f.deriveFont((float)fontsize);
         this.text = text;
         this.setBounds(x, y, width, height);
+        init();
+    }
+    
+    public Button(int x, int y, int width, int height, Color bgColor, Color txtColor, int fontsize, String text, boolean center){
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.bgColor = bgColor;
+        this.txtColor = txtColor;
+        this.font = Images.f.deriveFont((float)fontsize);
+        this.text = text;
+        this.center = center;
+        this.setBounds(x, y, width, height);
+        init();
+    }
+    
+    public Button(int x, int y, int width, int height, int fontsize, String text, boolean center){
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.bgColor = new Color(0,0,0,0);
+        this.txtColor = Color.WHITE;
+        this.font = Images.f.deriveFont((float)fontsize);
+        this.text = text;
+        this.setBounds(x, y, width, height);
+        this.center = center;
         init();
     }
     
@@ -76,12 +105,23 @@ public class Button extends Rectangle{
         g.setColor(bgColor);
         g.fillRect(x, y, width, height);
         g.setColor(txtColor);
+        if(center)
         drawCenteredString(g, text, button, font);
+        else
+        drawString(g, text, button, font);
     }
     
     private void drawCenteredString(Graphics g, String text, Rectangle rect, Font font) {
         FontMetrics metrics = g.getFontMetrics(font);
         int x = rect.x + (rect.width - metrics.stringWidth(text)) / 2;
+        int y = rect.y + ((rect.height - metrics.getHeight()) / 2) + metrics.getAscent();
+        g.setFont(font);
+        g.drawString(text, x, y);
+    }
+    
+    private void drawString(Graphics g, String text, Rectangle rect, Font font) {
+        FontMetrics metrics = g.getFontMetrics(font);
+        int x = rect.x;
         int y = rect.y + ((rect.height - metrics.getHeight()) / 2) + metrics.getAscent();
         g.setFont(font);
         g.drawString(text, x, y);

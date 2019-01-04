@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package liczno.GameStates;
+package liczno;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,30 +30,29 @@ import java.util.Collections;
  *
  * @author Maciek
  */
-class Score implements Comparable {
+public class Score implements Comparable {
+
     private int score;
     private String name;
-    public Score(String name, int score){
+
+    public Score(String name, int score) {
         this.score = score;
         this.name = name;
     }
-    
-    public int compareTo(Object s) {
-        int compareScore=((Score)s).getScore();
-        /* For Ascending order*/
-        return compareScore - this.score;
 
-        /* For Descending order do like this */
-        //return compareage-this.studentage;
+    @Override
+    public int compareTo(Object s) {
+        int compareScore = ((Score) s).getScore();
+        return compareScore - this.score;
     }
-    
-    private int getScore(){
+
+    private int getScore() {
         return score;
     }
-    
-     @Override
+
+    @Override
     public String toString() {
         return name + " " + score;
     }
-    
+
 }
