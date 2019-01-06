@@ -23,41 +23,30 @@
  */
 package liczno.GameStates;
 
-import liczno.Score;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
-import liczno.Audio;
 import liczno.Button;
 import liczno.GamePanel;
 import liczno.Images;
 import liczno.Main;
-import liczno.enterties.Player;
 
 
 
 /**
- *
+ * State of game displaying about file
+ * @see GameState
  * @author Maciek
  */
 public class AboutState extends GameState {
@@ -65,22 +54,28 @@ public class AboutState extends GameState {
     private Button topButton, doneButton;
     private BufferedReader in;
     Point click, hover;
-    private String patch = "src/liczno/GameStates/about", line, full="";
+    private String path = "about", line, full="";
     private int i, height;
     private ArrayList<String> about;
     private boolean enter = false, scroll =true;
-double x;
+    private String toptext, ok;
+    private Font f2;
+    private double y;
 
+    /**
+     * Creates AboutState
+     *
+     * @param gsm GameStateManager
+     * @see GameStateManager
+     */
     AboutState(GameStateManager gsm) {
         super(gsm);
-
-        topButton = new Button(GamePanel.WIDTH / 3 , GamePanel.HEIGHT / 7, GamePanel.WIDTH / 3, GamePanel.HEIGHT / 7, 100, "O grze");
-        doneButton = new Button(GamePanel.WIDTH / 8 * 3, GamePanel.HEIGHT / 5 * 4, GamePanel.WIDTH / 4, GamePanel.HEIGHT / 8, GamePanel.green, Color.WHITE, 60, "OK");
-        try {
-            in = new BufferedReader(new InputStreamReader(new FileInputStream(patch)));
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(AboutState.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        toptext  = GamePanel.messages.getString("about");
+        ok  = GamePanel.messages.getString("ok");
+        topButton = new Button(GamePanel.WIDTH / 3 , GamePanel.HEIGHT / 7, GamePanel.WIDTH / 3, GamePanel.HEIGHT / 7, 100, toptext);
+        doneButton = new Button(GamePanel.WIDTH / 8 * 3, GamePanel.HEIGHT / 5 * 4, GamePanel.WIDTH / 4, GamePanel.HEIGHT / 8, GamePanel.green, Color.WHITE, 60, ok);
+        InputStream is = this.getClass().getResourceAsStream(path);
+        in = new BufferedReader(new InputStreamReader(is));
         i =0;
         about = new ArrayList<>();  
         try {
@@ -93,7 +88,8 @@ double x;
         } catch (IOException ex) {
             Logger.getLogger(AboutState.class.getName()).log(Level.SEVERE, null, ex);
         }
-        x = 600;
+        height = i * 20;
+        y =  GamePanel.HEIGHT / 2;
     }
 
     @Override
@@ -106,6 +102,9 @@ double x;
 
     @Override
     public void tick() {
+        if(scroll)y -=0.4;
+        if(y<-height)y=GamePanel.HEIGHT;
+        if(y>GamePanel.HEIGHT)y=GamePanel.HEIGHT;
     }
 
     @Override
@@ -113,14 +112,13 @@ double x;
 
 
         g.drawImage(Images.bg, 0, 0, null);
-        Font f2 = Images.f.deriveFont(20F);
+        f2 = Images.f.deriveFont(20F);
         g.setFont(f2);
         g.setColor(Color.WHITE);
-        if(scroll)x -=0.4;
-        //for(int y = 0; y < i; y++)
-        drawString(g,full, GamePanel.WIDTH/8, (int)(x));
-        if(x<-1500)x=600;
-        g.drawImage(Images.bg, 0, 0, 1024, 210, 0, 0, 1024, 768, null);    
+        
+        drawString(g,full, GamePanel.WIDTH/8, (int)(y));
+        
+        g.drawImage(Images.bg, 0, 0, 1024, 210, 0, 0, 1024, 210, null);    
         g.drawImage(Images.bg, 0, 600, 1024, 768, 0, 600, 1024, 768, null);
 
         topButton.drawButton(g);
@@ -128,7 +126,7 @@ double x;
         doneButton.drawButton(g);
 
     }
-    void drawString(Graphics g, String text, int x, int y) {
+    private void drawString(Graphics g, String text, int x, int y) {
         for (String linea : text.split("<br/>")){ 
             g.drawString(linea, x, y += g.getFontMetrics().getHeight());
         }
@@ -138,13 +136,15 @@ double x;
         if (k == KeyEvent.VK_ENTER) {
             enter = true;
             checkClick();
+        }else if (k == KeyEvent.VK_ESCAPE) {
+            gsm.states.add(new MenuState(gsm));
         }
         if (k==KeyEvent.VK_UP){
             scroll=false;
-            x-=10;
+            y-=10;
         }
         if (k==KeyEvent.VK_DOWN){
-            x+=10;
+            y+=10;
             scroll=false;
         }
         if (k==KeyEvent.VK_SPACE){
@@ -161,6 +161,7 @@ double x;
     public void mouseClicked(MouseEvent e) {
         click = new Point(e.getX(), e.getY());
         checkClick();
+        
     }
 
     @Override
@@ -172,7 +173,7 @@ double x;
             Main.frame.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             hand = true;
         }
-            
+            drag = e.getY() - y;
         if(!hand)
         Main.frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         
@@ -183,6 +184,15 @@ double x;
         if (doneButton.contains(click)){
             gsm.states.pop();
         }
+    }
+double drag;
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        
+
+        
+       y = e.getY()-drag;
+
     }
 
 

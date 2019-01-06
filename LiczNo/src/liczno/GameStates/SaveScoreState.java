@@ -26,13 +26,8 @@ package liczno.GameStates;
 import liczno.Score;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -40,31 +35,34 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
-import liczno.Audio;
+import liczno.Button;
 import liczno.GamePanel;
 import liczno.Images;
 import liczno.Main;
 import liczno.enterties.Player;
 
 /**
+ * State of game save score input
  *
+ * @see GameState
  * @author Maciek
  */
 public class SaveScoreState extends GameState {
 
     private List<Character> input;
-    private Rectangle topbox, inputbox, scorebox, backbox, nextbox;
-    private ArrayList<Rectangle> boxes;
-    private String score;
-    Point click, hover;
+    private Button topButton, inputButton, backButton, nextButton;
+    private Button[] clickButtons; 
+    private String top, next, save, menu;
+    private Point click, hover;
 
     private boolean enter = false;
-    private String print = "Podaj imię";
     private static String name = "";
     private ArrayList<Score> scores;
-
+    /**
+     * Creates MenuState
+     *
+     * @see GameStateManager
+     */
     SaveScoreState(GameStateManager gsm) {
         super(gsm);
     }
@@ -74,15 +72,27 @@ public class SaveScoreState extends GameState {
         Main.frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         click = new Point(0, 0);
         hover = new Point(0, 0);
-        score = "Twój wynik: " + Player.score;
-        boxes = new ArrayList();
+
         input = new ArrayList();
-//              scores = GamePanel.score.readScore();
-//                GamePanel.score.sort(scores);
+        
+        top = GamePanel.messages.getString("givename");
+        menu = GamePanel.messages.getString("menu");
+        save = GamePanel.messages.getString("save");
+
+        topButton = new Button(GamePanel.WIDTH / 4, GamePanel.HEIGHT / 5, GamePanel.WIDTH / 2, GamePanel.HEIGHT / 4, 100, top);    
+        inputButton = new Button(GamePanel.WIDTH / 4, GamePanel.HEIGHT / 7 * 4, GamePanel.WIDTH /2, GamePanel.HEIGHT / 8,GamePanel.gray, Color.BLACK ,60, name);
+        backButton = new Button(GamePanel.WIDTH / 4, GamePanel.HEIGHT / 5 * 4, GamePanel.WIDTH / 4, GamePanel.HEIGHT / 6, GamePanel.red, Color.WHITE,  50, menu);
+        nextButton = new Button(GamePanel.WIDTH / 4 * 2, GamePanel.HEIGHT / 5 * 4, GamePanel.WIDTH / 4, GamePanel.HEIGHT / 6, GamePanel.green, Color.WHITE,  50, save);
+        clickButtons = new Button[]{backButton, nextButton};
     }
 
     @Override
     public void tick() {
+        name = "";
+        for (int i = 0; i < input.size(); i++) {
+            name += Character.toString(input.get(i));
+        }
+        inputButton.text=name;
     }
 
     @Override
@@ -90,41 +100,21 @@ public class SaveScoreState extends GameState {
 
 
         g.drawImage(Images.bg, 0, 0, null);
-        Font f2 = Images.f.deriveFont(100F);
-        g.setFont(f2);
-        g.setColor(Color.WHITE);
+        
+        topButton.drawButton(g);
+        inputButton.drawButton(g);
+        backButton.drawButton(g);
+        nextButton.drawButton(g);
 
-        //g.drawString(print, GamePanel.WIDTH/4, GamePanel.HEIGHT/5*3);
-        topbox = new Rectangle(GamePanel.WIDTH / 4, GamePanel.HEIGHT / 5, GamePanel.WIDTH / 2, GamePanel.HEIGHT / 4);
-        drawCenteredString(g, print, topbox, f2);
 
-        f2 = f2.deriveFont(60F);
-        g.setFont(f2);
-
-        inputbox = new Rectangle(370, 414, 384, 86);
-        g.setColor(new Color(191, 191, 191));
-        g.fillRect(370, 414, 384, 86);
-
-        name = "";
-        for (int i = 0; i < input.size(); i++) {
-            name += Character.toString(input.get(i));
-        }
-        g.setColor(Color.BLACK);
-        drawCenteredString(g, name, inputbox, f2);
-
-        nextbox = new Rectangle(GamePanel.WIDTH / 8 * 3, GamePanel.HEIGHT / 5 * 4, GamePanel.WIDTH / 4, GamePanel.HEIGHT / 6);
-        boxes.add(nextbox);
-        g.setColor(new Color(50, 120, 54));
-        g.fillRect(GamePanel.WIDTH / 8 * 3, GamePanel.HEIGHT / 5 * 4, GamePanel.WIDTH / 4, GamePanel.HEIGHT / 6);
-        g.setColor(Color.WHITE);
-        drawCenteredString(g, "Zapisz", nextbox, f2);
+       
 
     }
 
     @Override
     public void keyPressed(int k) {
 
-        if ((k >= 65 && k <= 90) || (k >= 97 && k <= 122)) {
+        if ((k >= 65 && k <= 90) || (k >= 97 && k <= 122) || k == 32) {
             if (input.size() < 16) {
                 input.add((char) k);
             }
@@ -135,6 +125,8 @@ public class SaveScoreState extends GameState {
         } else if (k == KeyEvent.VK_ENTER) {
             enter = true;
             checkClick();
+        } else if (k == KeyEvent.VK_ESCAPE) {
+            gsm.states.add(new MenuState(gsm));
         }
 
     }
@@ -152,8 +144,8 @@ public class SaveScoreState extends GameState {
     @Override
     public void mouseMoved(MouseEvent e) {
         hover = new Point(e.getX(), e.getY());
-        for (Rectangle box : boxes) {
-            if (box.contains(hover)) {
+        for (Button button : clickButtons) {
+            if (button.contains(hover)) {
                 Main.frame.setCursor(new Cursor(Cursor.HAND_CURSOR));
                 break;
             } else {
@@ -163,7 +155,7 @@ public class SaveScoreState extends GameState {
     }
 
     private void checkClick() {
-        if (nextbox.contains(click) || enter) {
+        if (nextButton.contains(click) || enter) {
             Main.audio.stop();
 
             try {
@@ -172,17 +164,12 @@ public class SaveScoreState extends GameState {
                 Logger.getLogger(SaveScoreState.class.getName()).log(Level.SEVERE, null, ex);
             }
             gsm.states.add(new MenuState(gsm));
-        } else if (backbox.contains(click)) {
+        } else if (backButton.contains(click)) {
             gsm.states.add(new MenuState(gsm));
         }
     }
 
-    public void drawCenteredString(Graphics g, String text, Rectangle rect, Font font) {
-        FontMetrics metrics = g.getFontMetrics(font);
-        int x = rect.x + (rect.width - metrics.stringWidth(text)) / 2;
-        int y = rect.y + ((rect.height - metrics.getHeight()) / 2) + metrics.getAscent();
-        g.setFont(font);
-        g.drawString(text, x, y);
+@Override
+    public void mouseDragged(MouseEvent e) {
     }
-
 }

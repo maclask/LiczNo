@@ -28,23 +28,39 @@ import java.awt.Rectangle;
 import liczno.Images;
 
 /**
+ * Create single bomb
  *
  * @author Maciek
  */
-public class Bomb  extends Rectangle{
-    
-    
-    public static final int bombWidth=50;
-    public static final int bombHeight=50;
+public class Bomb extends Rectangle {
 
-    public Bomb(int x, int y){
-        setBounds(x,y,bombWidth,bombHeight);
-    
+    /**
+     * Bomb width
+     */
+    public static final int bombWidth = 50;
+    /**
+     * Bomb height
+     */
+    public static final int bombHeight = 50;
+
+    /**
+     * Create bomb and set boudns depending of x, y, blockWidth, blockHeight
+     *
+     * @param x x-positon of block
+     * @param y y-positon of block
+     */
+    public Bomb(int x, int y) {
+        setBounds(x, y, bombWidth, bombHeight);
+
     }
-    
-    public void draw(Graphics g){
+
+    /**
+     * Draw bomb
+     *
+     * @param g object of Graphics class
+     */
+    public void draw(Graphics g) {
         g.drawImage(Images.bomb, x, y, null);
     }
-
 
 }

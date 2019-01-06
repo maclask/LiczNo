@@ -27,30 +27,21 @@ import liczno.Score;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
-import liczno.Audio;
 import liczno.Button;
 import liczno.GamePanel;
 import liczno.Images;
 import liczno.Main;
-import liczno.enterties.Player;
 
 /**
+ * State of game displaying setting menu
  *
+ * @see GameState
  * @author Maciek
  */
 public class SettingsState extends GameState {
@@ -58,45 +49,67 @@ public class SettingsState extends GameState {
     private Button topButton, doneButton;
     private Button[][] settingsList;
 
-    private final String[] settingsName = {"Efekty dźwiękowe", "Muzyka", "Wyczyść listę wyników", "Wygładzanie czcionek"};
-    private final String[] switchState = {"Włączone", "Wyłączone","Wyczyszczono","Wyczyść"};
+    private String[] settingsName;
+    private String[] switchState;
+    private String[] languages;
     private final static int settingsAmount = 2;
 
     private ArrayList<Rectangle> boxes;
     private String score;
-    Point click, hover;
+    private Point click, hover;
     private ArrayList<Score> scores;
 
-    private int records;
+    private int currentSel;
     private boolean enter = false;
-    private String print;
-
+    private String topText, ok;
+    /**
+     * Creates SettingsState
+     *
+     * @see GameStateManager
+     */
     SettingsState(GameStateManager gsm) {
         super(gsm);
-
-        topButton = new Button(GamePanel.WIDTH / 3 , GamePanel.HEIGHT / 7, GamePanel.WIDTH / 3, GamePanel.HEIGHT / 7, 100, "Ustawienia");
-        doneButton = new Button(GamePanel.WIDTH / 8 * 3, GamePanel.HEIGHT / 5 * 4, GamePanel.WIDTH / 4, GamePanel.HEIGHT / 8, GamePanel.green, Color.WHITE, 60, "OK");
+        settingsName = new String[]{GamePanel.messages.getString("sfx"),
+            GamePanel.messages.getString("music"),
+            GamePanel.messages.getString("clearscore"),
+            GamePanel.messages.getString("antialiasing"),
+            GamePanel.messages.getString("lang")};
+        switchState = new String[]{GamePanel.messages.getString("on"),
+            GamePanel.messages.getString("off"),
+            GamePanel.messages.getString("cleared"),
+            GamePanel.messages.getString("clear")};
+        languages = new String[]{GamePanel.messages.getString("pol"),
+            GamePanel.messages.getString("ang")};
+        topText = GamePanel.messages.getString("settings");
+        ok = GamePanel.messages.getString("ok");
+        topButton = new Button(GamePanel.WIDTH / 3, GamePanel.HEIGHT / 11, GamePanel.WIDTH / 3, GamePanel.HEIGHT / 7, 100, topText);
+        doneButton = new Button(GamePanel.WIDTH / 8 * 3, GamePanel.HEIGHT / 5 * 4, GamePanel.WIDTH / 4, GamePanel.HEIGHT / 8, GamePanel.green, Color.WHITE, 60, ok);
 
         settingsList = new Button[settingsName.length][settingsAmount];
         for (int i = 0; i < settingsList.length; i++) {
-            settingsList[i][0] = new Button(GamePanel.WIDTH / 5  , GamePanel.HEIGHT / 9 * 3+ 80 * i, GamePanel.WIDTH / 4, GamePanel.HEIGHT / 10, 40, settingsName[i], false);
-            settingsList[i][1] = new Button(GamePanel.WIDTH / 5 * 3, GamePanel.HEIGHT / 9 *3 + 80 * i, GamePanel.WIDTH / 4, GamePanel.HEIGHT / 10, GamePanel.green, Color.WHITE, 40, switchState[0]);
+            settingsList[i][0] = new Button(GamePanel.WIDTH / 5, GamePanel.HEIGHT / 8 * 2 + 80 * i, GamePanel.WIDTH / 4, GamePanel.HEIGHT / 10, 40, settingsName[i], false);
+            settingsList[i][1] = new Button(GamePanel.WIDTH / 5 * 3, GamePanel.HEIGHT / 8 * 2 + 80 * i, GamePanel.WIDTH / 4, GamePanel.HEIGHT / 10, GamePanel.green, Color.WHITE, 40, switchState[0]);
         }
-        if(!Main.audio.sfxOn){
+        if (!Main.audio.sfxOn) {
             settingsList[0][1].bgColor = GamePanel.red;
             settingsList[0][1].text = switchState[1];
         }
-        if(!Main.audio.musicOn){
+        if (!Main.audio.musicOn) {
             settingsList[1][1].bgColor = GamePanel.red;
             settingsList[1][1].text = switchState[1];
         }
-        if(!GamePanel.antialiasing){
+        if (!GamePanel.antialiasing) {
             settingsList[3][1].bgColor = GamePanel.red;
             settingsList[3][1].text = switchState[1];
         }
         settingsList[2][1].text = switchState[3];
         settingsList[2][1].bgColor = GamePanel.red;
-                
+        if (GamePanel.currentLocale == GamePanel.plLocale) {
+            settingsList[4][1].text = languages[0];
+        } else if (GamePanel.currentLocale == GamePanel.enLocale) {
+            settingsList[4][1].text = languages[1];
+        }
+        currentSel = 0;
     }
 
     @Override
@@ -114,7 +127,6 @@ public class SettingsState extends GameState {
     @Override
     public void draw(Graphics g) {
 
-
         g.drawImage(Images.bg, 0, 0, null);
         Font f2 = Images.f.deriveFont(100F);
         g.setFont(f2);
@@ -123,6 +135,11 @@ public class SettingsState extends GameState {
         topButton.drawButton(g);
         for (int i = 0; i < settingsList.length; i++) {
             settingsList[i][0].drawButton(g);
+            if (currentSel == i) {
+                settingsList[i][1].txtColor = GamePanel.lightgray;
+            } else {
+                settingsList[i][1].txtColor = Color.WHITE;
+            }
             settingsList[i][1].drawButton(g);
         }
         doneButton.drawButton(g);
@@ -133,7 +150,19 @@ public class SettingsState extends GameState {
     public void keyPressed(int k) {
         if (k == KeyEvent.VK_ENTER) {
             enter = true;
-            checkClick();
+            checkClick(currentSel);
+        } else if (k == KeyEvent.VK_ESCAPE) {
+            gsm.states.add(new MenuState(gsm));
+        } else if (k == KeyEvent.VK_DOWN) {
+            currentSel++;
+            if (currentSel >= settingsList.length) {
+                currentSel = 0;
+            }
+        } else if (k == KeyEvent.VK_UP) {
+            currentSel--;
+            if (currentSel < 0) {
+                currentSel = settingsList.length - 1;
+            }
         }
     }
 
@@ -144,81 +173,84 @@ public class SettingsState extends GameState {
     @Override
     public void mouseClicked(MouseEvent e) {
         click = new Point(e.getX(), e.getY());
-        checkClick();
+        checkClick(currentSel);
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
         hover = new Point(e.getX(), e.getY());
         boolean hand = false;
-        for (int i = 0; i < settingsList.length ; i++) {
+        for (int i = 0; i < settingsList.length; i++) {
             if (settingsList[i][1].contains(hover)) {
+                currentSel = i;
                 Main.frame.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 hand = true;
                 break;
-            }             
+            }
         }
-        if(doneButton.contains(hover)){
+        if (doneButton.contains(hover)) {
             Main.frame.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             hand = true;
         }
-            
-        if(!hand)
-        Main.frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        
+
+        if (!hand) {
+            Main.frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        }
+
     }
 
-    private void checkClick() {
-        if (settingsList[0][1].contains(click) || enter) {
-            if(Main.audio.sfxOn){
+    private void checkClick(int currentSel) {
+        if (doneButton.contains(click)) {
+            gsm.states.add(new MenuState(gsm));
+        } else if (settingsList[0][1].contains(click) || currentSel == 0) {
+            if (Main.audio.sfxOn) {
                 Main.audio.sfxOn = !Main.audio.sfxOn;
                 settingsList[0][1].bgColor = GamePanel.red;
                 settingsList[0][1].text = switchState[1];
-            }
-            else{
+            } else {
                 Main.audio.sfxOn = !Main.audio.sfxOn;
                 settingsList[0][1].bgColor = GamePanel.green;
                 settingsList[0][1].text = switchState[0];
             }
-            
-        } 
-        if (settingsList[1][1].contains(click)) {
-            
-            if(Main.audio.musicOn){
-                Main.audio.playLevelMp3a();
+
+        } else if (settingsList[1][1].contains(click) || currentSel == 1) {
+
+            if (Main.audio.musicOn) {
+                Main.audio.stopLevelMp3();
                 Main.audio.musicOn = !Main.audio.musicOn;
                 settingsList[1][1].bgColor = GamePanel.red;
                 settingsList[1][1].text = switchState[1];
-            }
-            else{
+            } else {
                 Main.audio.musicOn = !Main.audio.musicOn;
                 Main.audio.playLevelMp3(5);
                 settingsList[1][1].bgColor = GamePanel.green;
                 settingsList[1][1].text = switchState[0];
             }
-        } 
-        if (settingsList[3][1].contains(click)) {
-            
-            if(GamePanel.antialiasing){
+        } else if (settingsList[3][1].contains(click) || currentSel == 3) {
+
+            if (GamePanel.antialiasing) {
                 GamePanel.antialiasing = !GamePanel.antialiasing;
                 settingsList[3][1].bgColor = GamePanel.red;
                 settingsList[3][1].text = switchState[1];
-            }
-            else{
+            } else {
                 GamePanel.antialiasing = !GamePanel.antialiasing;
                 settingsList[3][1].bgColor = GamePanel.green;
                 settingsList[3][1].text = switchState[0];
             }
-        } 
-        if (settingsList[2][1].contains(click)) {
-                GamePanel.score.deleteScores();
-                settingsList[2][1].bgColor = GamePanel.green;
-                settingsList[2][1].text = switchState[2];
+        } else if (settingsList[2][1].contains(click) || currentSel == 2) {
+            GamePanel.score.deleteScores();
+            settingsList[2][1].bgColor = GamePanel.green;
+            settingsList[2][1].text = switchState[2];
+        } else if (settingsList[4][1].contains(click) || currentSel == 4) {
+
+            GamePanel.changeLang();
+
+            gsm.states.add(new SettingsState(gsm));
         }
-        if (doneButton.contains(click)){
-            gsm.states.pop();
-        }
+
     }
 
-
+    @Override
+    public void mouseDragged(MouseEvent e) {
+    }
 }

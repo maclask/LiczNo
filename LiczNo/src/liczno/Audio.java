@@ -24,80 +24,96 @@
 package liczno;
 
 import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import javazoom.jl.player.Player;
 
 /**
+ * Class loads and plays audio files
  *
  * @author Maciek
  */
 public class Audio {
 
     private InputStream[] bufferedIn;
-    private Clip clip;
+    private Clip[] clip;
     private AudioInputStream[] ais;
+    /**
+     * Thread to play mp3 files
+     */
     public Thread mp3;
+    /**
+     * Boolean specifies if sfx or music is on
+     */
     public boolean sfxOn, musicOn;
 
-    String[] url = {"sfx/solved.wav", "sfx/time.wav", "sfx/correct.wav", "sfx/nextlevel.wav", "sfx/wrong.wav", "sfx/click.wav"};
+    private int track = 0;
+    String[] url = {"sfx/solved.wav", "sfx/time.wav", "sfx/correct.wav", "sfx/nextlevel.wav", "sfx/wrong.wav"};
 
+    /**
+     * Load audio files
+     *
+     * @throws LineUnavailableException line is unabailble
+     * @throws IOException ioexception
+     * @throws UnsupportedAudioFileException unsuported audio file
+     */
     public Audio() throws LineUnavailableException, UnsupportedAudioFileException, IOException {
-        clip = AudioSystem.getClip();
+
         ais = new AudioInputStream[url.length];
         bufferedIn = new InputStream[url.length];
+        clip = new Clip[url.length];
         for (int i = 0; i < url.length; i++) {
             bufferedIn[i] = new BufferedInputStream(getClass().getResourceAsStream(url[i]));
             ais[i] = AudioSystem.getAudioInputStream(bufferedIn[i]);
+            clip[i] = AudioSystem.getClip();
+            clip[i].open(ais[i]);
         }
         sfxOn = true;
         musicOn = true;
     }
 
+    /**
+     * Plays audio track
+     *
+     * @param track specifies track number from Sritng url array
+     * @param loop specifies if track must loop itself
+     * @throws LineUnavailableException line is unabailble
+     * @throws IOException ioexception
+     * @throws UnsupportedAudioFileException unsuported audio file
+     */
     public void play(int track, boolean loop) throws LineUnavailableException, IOException, UnsupportedAudioFileException {
-        System.out.println("if sfx");
+        this.track = track;
         if (sfxOn) {
-            System.out.println("if open");
-            if (clip.isOpen()) {
-                System.out.println("syop");
-                clip.stop();
-                System.out.println("close");
-                clip.close();
-            }System.out.println("if aval");
-            if (ais[track].available() == 0) {
-                System.out.println("reset");
-                ais[track].reset();
-            }
-            System.out.println("reset");
-            clip.open(ais[track]);
-            System.out.println("open track");
-            clip.start();
-            System.out.println("start");
+            clip[track].setMicrosecondPosition(0);
+            clip[track].start();
             if (loop) {
-                clip.loop(Clip.LOOP_CONTINUOUSLY);
+                clip[track].loop(Clip.LOOP_CONTINUOUSLY);
             }
-            System.out.println("loop");
         }
+
     }
 
+    /**
+     * Stops playing audio track
+     */
     public void stop() {
         if (sfxOn) {
-            clip.stop();
-            clip.close();
+            clip[track].stop();
         }
     }
 
+    /**
+     * Plays mp3 file. Creates new Thead to handle playing.
+     *
+     * @param level specifies track from String track array which is associated
+     * with level number.
+     */
     public void playLevelMp3(int level) {
         if (musicOn) {
             final int parameter = level;
@@ -121,13 +137,6 @@ public class Audio {
                 }
 
                 public void run() {
-//                    while (running) {
-//                        try {
-//                            Thread.sleep(1000);
-//                        } catch (InterruptedException ex) {
-//                            Logger.getLogger(Audio.class.getName()).log(Level.SEVERE, null, ex);
-//                        }
-//                    }
                     if (is != null) {
                         this.player.close();
                     }
@@ -173,7 +182,10 @@ public class Audio {
         }
     }
 
-    public void playLevelMp3a() {
+    /**
+     * Stops playing mp3 by stoping Thread created in playLevelMp3
+     */
+    public void stopLevelMp3() {
         if (musicOn) {
             mp3.stop();
         }

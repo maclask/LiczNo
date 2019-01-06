@@ -18,17 +18,36 @@ import javax.imageio.ImageIO;
 import static liczno.Main.f;
 
 /**
+ * Loads images used in game and font
  *
  * @author Maciek
  */
 public class Images {
 
+    /**
+     * Array of players animations
+     */
     public static BufferedImage[] playerwalking, playerjumping, playerdie, playeridle;
+    /**
+     * Frames of players animations
+     */
     public static final int PW = 20, PJ = 30, PI = 16, PD = 30;
-    public static BufferedImage bg, logo, block, icon, bomb, close;
+    /**
+     * BufferedImage used in game
+     */
+    public static BufferedImage bg, logo, block, icon, bomb, close, help;
+    /**
+     * Dimmension of image
+     */
     public static int bgWidth, bgHeight, logoWidth, logoHeight;
+    /**
+     * Font used in game
+     */
     public static Font f;
 
+    /**
+     * Loads images and font
+     */
     public Images() {
         //blocks = new BufferedImage[1];
 
@@ -36,10 +55,9 @@ public class Images {
             block = ImageIO.read(getClass().getResourceAsStream("images/block.png"));
             bg = ImageIO.read(getClass().getResource("images/bg.png"));
             logo = ImageIO.read(getClass().getResource("images/logo.png"));
-            icon = ImageIO.read(getClass().getResource("images/logo.small.png"));
             bomb = ImageIO.read(getClass().getResource("images/bomb.png"));
             close = ImageIO.read(getClass().getResource("images/close.png"));
-
+            help = ImageIO.read(getClass().getResource("images/help.png"));
         } catch (IOException e) {
             Logger.getLogger(Images.class.getName()).log(Level.SEVERE, null, e);
         }

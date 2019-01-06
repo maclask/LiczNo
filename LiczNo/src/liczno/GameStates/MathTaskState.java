@@ -28,10 +28,8 @@ import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -42,25 +40,29 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import liczno.Audio;
+import liczno.Button;
 import liczno.GamePanel;
 import liczno.Images;
 import liczno.Main;
 import liczno.enterties.Player;
 
 /**
+ * State of game displaying math task
  *
+ * @see GameState
  * @author Maciek
  */
 public class MathTaskState extends GameState {
 
     private List<Integer> input;
+    private Button topButton;
+    private Rectangle topbox, inputbox, closebox, okbox, taskbox;
     private boolean solved = false;
     private int width = 400, height = 600;
-    private int difficulity, solution, ans = 0;
+    private int solution, ans = 0;
     private int firstNumber, secondNumber, thirdNumber;
-    private String sfirstOperator, ssecondOperator, task, sans = "";
-    private Rectangle inputbox, taskbox, okbox, closebox;
+    private String sfirstOperator, ssecondOperator, task, inputAns = "", topText, timeText, okText;
+
     private Point click = new Point(0, 0), hover = new Point(0, 0);
 
     private int time = 12;
@@ -68,8 +70,19 @@ public class MathTaskState extends GameState {
 
     Random generator;
 
+    /**
+     * Creates MathTaskState
+     *
+     * @param gsm GameStateManager
+     * @see GameStateManager
+     */
     public MathTaskState(GameStateManager gsm) {
         super(gsm);
+
+        topText = GamePanel.messages.getString("giveans");
+        okText = GamePanel.messages.getString("ok");
+        topButton = new Button(376, 203, 284, 46, Color.WHITE, Color.BLACK, 50, topText);
+
     }
 
     public void init() {
@@ -100,6 +113,10 @@ public class MathTaskState extends GameState {
             close();
         }
 
+        inputAns = "";
+        for (int k : input) {
+            inputAns += Character.toString((char) k);
+        }
     }
 
     public void draw(Graphics g) {
@@ -107,28 +124,24 @@ public class MathTaskState extends GameState {
         g.setColor(Color.WHITE);
         g.fillRect(GamePanel.WIDTH / 2 - width / 2, GamePanel.HEIGHT / 2 - height / 2, width, height);
 
-       
         Font f2 = Images.f.deriveFont(100F);
         g.setFont(f2);
         g.setColor(Color.BLACK);
 
+        topButton.drawButton(g);
         inputbox = new Rectangle(370, 414, 284, 86);
         g.setColor(new Color(191, 191, 191));
         g.fillRect(370, 414, 284, 86);
 
-        taskbox = new Rectangle(376, 263, 284, 46);
+        taskbox = new Rectangle(376, 300, 284, 46);
         g.setColor(Color.BLACK);
         drawCenteredString(g, task, taskbox, f2);
 
         closebox = new Rectangle(650, 120, 30, 30);
         g.drawImage(Images.close, 650, 120, null);
 
-        sans = "";
-        for (int k : input) {
-            sans += Character.toString((char) k);
-        }
         g.setColor(Color.BLACK);
-        drawCenteredString(g, sans, inputbox, f2);
+        drawCenteredString(g, inputAns, inputbox, f2);
 
         f2 = f2.deriveFont(40F);
         g.setFont(f2);
@@ -140,7 +153,7 @@ public class MathTaskState extends GameState {
         g.fillRect(440, 526, 144, 75);
         g.setColor(Color.WHITE);
         f2 = Images.f.deriveFont(50F);
-        drawCenteredString(g, "OK", okbox, f2);
+        drawCenteredString(g, okText, okbox, f2);
 
     }
 
@@ -160,6 +173,8 @@ public class MathTaskState extends GameState {
         };
         if (k == KeyEvent.VK_ENTER) {
             solved = enter();
+        } else if (k == KeyEvent.VK_ESCAPE) {
+            enter();
         }
     }
 
@@ -167,38 +182,39 @@ public class MathTaskState extends GameState {
 
     }
 
+    /**
+     * If clicked close button go to enter method
+     *
+     * @return solved boolean
+     */
     public boolean close() {
-//            solved=false;
-//            Player.bombTouched=false;
-//            Player.solved=true;
-//            Main.frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-//            gsm.states.pop();
-//            gsm.states.add(new EndGameState(gsm));
         enter();
         return solved;
     }
 
+    /**
+     * Check input
+     *
+     * @return true if correct
+     */
     public boolean enter() {
         ans = 0;
         for (int k : input) {
-
             ans = 10 * ans + k - 48;
-
         }
         if (ans == solution) {
-            // try {
+
             solved = true;
             Player.bombTouched = false;
             Player.solved = true;
             Player.score += time;
-            Main.frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             Main.audio.stop();
+            Main.frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             try {
                 Main.audio.play(2, false);
             } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
                 Logger.getLogger(MathTaskState.class.getName()).log(Level.SEVERE, null, ex);
             }
-
             gsm.states.pop();
 
         } else {
@@ -206,7 +222,7 @@ public class MathTaskState extends GameState {
             Player.solved = true;
             Main.frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             Main.audio.stop();
-            Main.audio.playLevelMp3a();
+            Main.audio.stopLevelMp3();
             try {
                 Main.audio.play(4, false);
             } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
@@ -214,8 +230,8 @@ public class MathTaskState extends GameState {
             }
 
             Player.isDead = true;
-            // gsm.states.pop();
-            gsm.states.add(new EndGameState(gsm, 0, Player.isDead));
+            gsm.states.pop();
+
         }
 
         return solved;
@@ -272,7 +288,7 @@ public class MathTaskState extends GameState {
 
     }
 
-    public void drawCenteredString(Graphics g, String text, Rectangle rect, Font font) {
+    private void drawCenteredString(Graphics g, String text, Rectangle rect, Font font) {
         FontMetrics metrics = g.getFontMetrics(font);
         int x = rect.x + (rect.width - metrics.stringWidth(text)) / 2;
         int y = rect.y + ((rect.height - metrics.getHeight()) / 2) + metrics.getAscent();
@@ -297,10 +313,14 @@ public class MathTaskState extends GameState {
         if (okbox.contains(hover) || closebox.contains(hover)) {
             Main.frame.setCursor(new Cursor(Cursor.HAND_CURSOR));
             hand = true;
-        } 
-        if(!hand)
-        Main.frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        
+        }
+        if (!hand) {
+            Main.frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        }
+
     }
 
+    @Override
+    public void mouseDragged(MouseEvent e) {
+    }
 }

@@ -31,6 +31,7 @@ import liczno.GamePanel;
 import liczno.Images;
 
 /**
+ * Generates bombs on map in random positions
  *
  * @author Maciek
  */
@@ -40,13 +41,18 @@ public class Bombs {
     private int amount;
     private ArrayList<Block> blocksList;
     private ArrayList<Bomb> bombsList;
-    Bomb bomb;
-    Random generator;
+    private Bomb bomb;
+    private Random generator;
     private List<Integer> selectedBlock;
     private List<Integer> selectedX;
     private int newValue;
     private Player player;
-    
+    /**
+     * Creates bombs on map
+     * @param amount amount of bombs
+     * @param blocksList ArrayList of blocks on map
+     * @param player Player object
+     */
     public Bombs(int amount, ArrayList<Block> blocksList, Player player){
         
         this.amount = amount;
@@ -86,12 +92,19 @@ public class Bombs {
         }
     }
     
+    /**
+     * Draw bombs
+     * @param g Object of Graphics class 
+     */
     public void draw(Graphics g){
         for(int i=0; i<bombsList.size(); i++){
             bombsList.get(i).draw(g);
         }
     }
-    
+    /**
+     * 
+     * @return ArrayList of bombs
+     */
      public ArrayList<Bomb> getBombs(){
         return bombsList;
     }

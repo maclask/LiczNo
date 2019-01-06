@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 import liczno.enterties.Block;
 
 /**
+ * Generates map from file
  *
  * @author Maciek
  */
@@ -26,13 +27,21 @@ public class Map {
     private String path;
     private Block[][] blocks;
 
-    ArrayList<Block> blocksList = new ArrayList<>();
+    private ArrayList<Block> blocksList = new ArrayList<>();
 
+    /**
+     * Loads path to map file
+     *
+     * @param path path to map file
+     */
     public Map(String path) {
         this.path = path;
         loadMap();
     }
 
+    /**
+     * Loads map and cretes block base on it
+     */
     public void loadMap() {
         InputStream is = this.getClass().getResourceAsStream(path);
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
@@ -70,12 +79,21 @@ public class Map {
         }
     }
 
+    /**
+     * Draw map
+     *
+     * @param g object of Graphics class
+     */
     public void draw(Graphics g) {
         for (int i = 0; i < blocksList.size(); i++) {
             blocksList.get(i).draw(g);
         }
     }
 
+    /**
+     *
+     * @return ArrayList of blocks in map
+     */
     public ArrayList<Block> getBlocks() {
         return blocksList;
     }

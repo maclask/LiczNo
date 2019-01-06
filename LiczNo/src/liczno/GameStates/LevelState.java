@@ -10,29 +10,21 @@ import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.scene.input.KeyCode;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
-import liczno.Audio;
 import liczno.GamePanel;
 import liczno.Images;
 import liczno.Main;
-import liczno.enterties.Block;
 import liczno.enterties.Bombs;
 import liczno.enterties.Player;
 import liczno.mapping.Map;
 
 /**
+ * State of game displaying current level
  *
+ * @see GameState
  * @author Maciek
  */
 public class LevelState extends GameState {
@@ -40,29 +32,39 @@ public class LevelState extends GameState {
     Player player;
     Map map;
     Bombs bombs;
-    int time = 60;
+    int time = 20;
     int level;
     private long lasttime = System.nanoTime();
-    public String mapPath;
+    public String mapPath, score, timeString, menu;
     private MathTaskState task;
     int bombamount;
     Rectangle backbox;
     Point click, hover;
 
+    /**
+     * Creates LevelState
+     *
+     * @param gsm GameStateManager
+     * @param level number of level to create
+     * @param bombamount numbers of bomb to be display on level
+     * @see GameStateManager
+     */
     public LevelState(GameStateManager gsm, int level, int bombamount) {
         super(gsm);
         this.bombamount = bombamount;
         this.level = level;
         //init(); 
         player = new Player();
-        mapPath = "map"+level;
+        mapPath = "map" + level;
         map = new Map(mapPath);
-        System.out.println(this.bombamount);
         bombs = new Bombs(bombamount, map.getBlocks(), player);
         this.bombamount = bombs.getBombs().size();
         Main.audio.playLevelMp3(level);
         Main.frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 
+        score = GamePanel.messages.getString("score");
+        timeString = GamePanel.messages.getString("time");
+        menu = GamePanel.messages.getString("menu");
     }
 
     @Override
@@ -99,7 +101,7 @@ public class LevelState extends GameState {
         if (bombamount == 0) {
             Player.score += time;
             bombamount--; //to stop adding time
-            Main.audio.playLevelMp3a();
+            Main.audio.stopLevelMp3();
 
             gsm.states.add(new EndGameState(gsm, level, Player.isDead));
         }
@@ -117,16 +119,16 @@ public class LevelState extends GameState {
         Font f2 = Images.f.deriveFont(40F);
         g.setFont(f2);
         g.setColor(Color.WHITE);
-        g.drawString("CZAS", 50, 50);
+        g.drawString(timeString, 50, 50);
         g.drawString(String.valueOf(time), 50, 90);
-        g.drawString("PUNKTY", GamePanel.WIDTH - 150, 50);
+        g.drawString(score, GamePanel.WIDTH - 150, 50);
         g.drawString(String.valueOf(Player.score), GamePanel.WIDTH - 150, 90);
 
         backbox = new Rectangle(50, GamePanel.HEIGHT - 65, 100, 50);
         g.setColor(new Color(255, 51, 51));
         g.fillRect(50, GamePanel.HEIGHT - 65, 100, 50);
         g.setColor(Color.WHITE);
-        drawCenteredString(g, "Menu", backbox, f2);
+        drawCenteredString(g, menu, backbox, f2);
     }
 
     @Override
@@ -134,6 +136,9 @@ public class LevelState extends GameState {
         player.keyPressed(k);
         if (k == KeyEvent.VK_T) {
             bombs = new Bombs(bombamount, map.getBlocks(), player);
+        } else if (k == KeyEvent.VK_ESCAPE) {
+            Main.audio.stopLevelMp3();
+            gsm.states.add(new MenuState(gsm));
         }
     }
 
@@ -147,7 +152,7 @@ public class LevelState extends GameState {
         click = new Point(e.getX(), e.getY());
 
         if (backbox.contains(click)) {
-            Main.audio.playLevelMp3a();
+            Main.audio.stopLevelMp3();
             gsm.states.add(new MenuState(gsm));
         }
     }
@@ -156,21 +161,25 @@ public class LevelState extends GameState {
     public void mouseMoved(MouseEvent e) {
         hover = new Point(e.getX(), e.getY());
         boolean hand = false;
-        if(backbox.contains(hover)) {
+        if (backbox.contains(hover)) {
             Main.frame.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                hand = true;
+            hand = true;
         }
-        if(!hand)
-        Main.frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        
-   
+        if (!hand) {
+            Main.frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        }
+
     }
 
-    public void drawCenteredString(Graphics g, String text, Rectangle rect, Font font) {
+    private void drawCenteredString(Graphics g, String text, Rectangle rect, Font font) {
         FontMetrics metrics = g.getFontMetrics(font);
         int x = rect.x + (rect.width - metrics.stringWidth(text)) / 2;
         int y = rect.y + ((rect.height - metrics.getHeight()) / 2) + metrics.getAscent();
         g.setFont(font);
         g.drawString(text, x, y);
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
     }
 }

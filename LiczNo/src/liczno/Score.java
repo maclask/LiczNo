@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
+ * Handles one score.
  *
  * @author Maciek
  */
@@ -35,11 +36,23 @@ public class Score implements Comparable {
     private int score;
     private String name;
 
+    /**
+     * Creates score
+     *
+     * @param name name of player
+     * @param score score of player
+     */
     public Score(String name, int score) {
         this.score = score;
         this.name = name;
     }
 
+    /**
+     * Compares this score to score given in param
+     *
+     * @param s Casted to Score
+     * @return difference between score of s and this score
+     */
     @Override
     public int compareTo(Object s) {
         int compareScore = ((Score) s).getScore();
@@ -50,6 +63,10 @@ public class Score implements Comparable {
         return score;
     }
 
+    /**
+     *
+     * @return String with name and score ex. "John 20"
+     */
     @Override
     public String toString() {
         return name + " " + score;
