@@ -284,8 +284,6 @@ public class MathTaskState extends GameState {
         } else if ("*".equals(sfirstOperator) && "*".equals(ssecondOperator)) {
             solution = firstNumber * secondNumber * thirdNumber;
         }
-        System.out.println(solution);
-
     }
 
     private void drawCenteredString(Graphics g, String text, Rectangle rect, Font font) {

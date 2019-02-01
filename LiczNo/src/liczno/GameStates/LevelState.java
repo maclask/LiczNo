@@ -134,9 +134,7 @@ public class LevelState extends GameState {
     @Override
     public void keyPressed(int k) {
         player.keyPressed(k);
-        if (k == KeyEvent.VK_T) {
-            bombs = new Bombs(bombamount, map.getBlocks(), player);
-        } else if (k == KeyEvent.VK_ESCAPE) {
+        if (k == KeyEvent.VK_ESCAPE) {
             Main.audio.stopLevelMp3();
             gsm.states.add(new MenuState(gsm));
         }
